@@ -26,19 +26,8 @@ export const product_graphql = gql`
             _id
             name
           }
-          variant{
-            _id
-            name
-            variant_option{
-              _id
-              name
-              label: name
-            }
-          }
-          name
-          slug
+          title
           description
-          thumbnail
           createdAt
         }
       }
@@ -65,8 +54,6 @@ export const filter_product_graphql = gql`
           brand{
             name
           }
-          name
-          slug
           description
         }
       }

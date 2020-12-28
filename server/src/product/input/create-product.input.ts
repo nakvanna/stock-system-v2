@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import {CreateProductOptionInput} from "../../product-option/input/create-product-option.input";
 
 @InputType()
 export class OptionInput {
@@ -28,4 +29,7 @@ export class CreateProductInput {
   variant2: string;
   @Field(() => OptionInput, { nullable: true })
   variant3: string;
+  //Create product option
+  @Field(() => [CreateProductOptionInput])
+  create_product_option_input: string[];
 }

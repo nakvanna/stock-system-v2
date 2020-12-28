@@ -1,11 +1,12 @@
+// @ts-ignore
 import {computed, ref, watch} from "@vue/composition-api";
-import {useMutation} from "@vue/apollo-composable";
-import {ProductModel} from "../model/product.model";
+// @ts-ignore
+import {useMutation} from '@vue/apollo-composable';
+import {OptionModel, ProductModel} from "../model/product.model";
 import {remove_product_graphql} from "../graphql/remove-product.graphql";
 import {update_product_graphql} from "../graphql/update-product.graphql";
 import {product_graphql} from "../graphql/product.graphql";
 import {create_product_graphql} from "../graphql/create-product.graphql";
-import {VariantModel} from "../view/variant/model/variant.model";
 
 //--OnDone message--//
 function onSuccess(_data: any, context: any) {
@@ -27,37 +28,38 @@ function onSuccess(_data: any, context: any) {
 }
 
 export const selected_product = ref({}) as any;
-
 /*** CRUD Action ***/
 
 /*CREATE*/
 export function createProduct(prop: any, context: any) {
   //--variables--//
+  const pre_product_option = ref<any>([]);
   const create_data = ref<ProductModel>({
-    thumbnail: 'https://i.ibb.co/NSwMBP0/Screenshot-from-2020-12-03-11-26-31.png',
-    create_variant_input: [{} as VariantModel]
-  });
+    variant1: {name: 'Size', values: []},
+    variant2: {name: 'Color', values: []},
+    variant3: {name: 'Style', values: []},
+    create_product_option_input: [],
+    description: '',
+    product_status: 'Draft',
+    default_price: 0
+  } as ProductModel);
   //--end-variables--//
 
   //--computed--//
   const mapped = computed(function () {
+    console.log(create_data.value.variant1.values.length)
+    const copy = Object.assign({}, create_data.value);
+    delete copy.pre_variants;
+    delete copy.default_price;
+    delete copy.default_sku;
     return {
-      ...create_data.value,
+      ...copy,
       sub_category_id: create_data.value.sub_category_id?._id,
       brand_id: create_data.value.brand_id?._id,
-      create_variant_input: create_data.value.create_variant_input?.map(v => {
-        return {
-          product_id: '',
-          name: v.name,
-          //@ts-ignore
-          create_variant_option_input: v.create_variant_option_input?.map(v1 => {
-            return {
-              variant_id: '',
-              name: v1.trim(),
-            }
-          }),
-        }
-      })
+      variant1: create_data.value.variant1.values.length === 0 ? null: create_data.value.variant1,
+      variant2: create_data.value.variant2.values.length === 0 ? null: create_data.value.variant2,
+      variant3: create_data.value.variant3.values.length === 0 ? null: create_data.value.variant3,
+      create_product_option_input: []
     }
   });
   //--end-computed--//
@@ -77,10 +79,16 @@ export function createProduct(prop: any, context: any) {
 
   onDone((data: any) => {
     if (data.data.createProduct.success) {
+      pre_product_option.value = [];
       create_data.value = {
-        thumbnail: 'https://i.ibb.co/NSwMBP0/Screenshot-from-2020-12-03-11-26-31.png',
-        create_variant_input: [{} as VariantModel]
-      };
+        variant1: {name: 'Size', values: []},
+        variant2: {name: 'Color', values: []},
+        variant3: {name: 'Style', values: []},
+        create_product_option_input: [],
+        description: '',
+        product_status: 'Draft',
+        default_price: 0
+      } as ProductModel;
       context.emit('on-success')
     }
   })
@@ -89,6 +97,7 @@ export function createProduct(prop: any, context: any) {
   //--return--//
   return {
     create_data,
+    pre_product_option,
     createData,
     mapped
   }
@@ -176,7 +185,7 @@ export const readProduct = (table: any) => {
 /*UPDATE*/
 export function updateProduct(prop: any, context: any) {
   //--variables--//
-  const update_data = ref<ProductModel>({});
+  const update_data = ref<ProductModel>({} as ProductModel);
   //--end variables--//
 
   //computed
@@ -211,7 +220,7 @@ export function updateProduct(prop: any, context: any) {
 
   onDone((data: any) => {
     if (data.data.updateProduct.success) {
-      update_data.value = {}
+      update_data.value = {} as ProductModel
     }
   })
   //--end vue apollo--//

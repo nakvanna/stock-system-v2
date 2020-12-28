@@ -267,11 +267,25 @@ input CreateProductInput {
   variant1: OptionInput
   variant2: OptionInput
   variant3: OptionInput
+  create_product_option_input: [CreateProductOptionInput!]!
 }
 
 input OptionInput {
   name: String
   values: [String!]
+}
+
+input CreateProductOptionInput {
+  product_id: String
+  sku: String
+  weight: Float
+  weight_unit: String
+  price: Float
+  barcode: String
+  image_position: Float
+  option1: String
+  option2: String
+  option3: String
 }
 
 input UpdateProductInput {
@@ -320,19 +334,6 @@ input UpdateProductMediaInput {
   src: String
   alt: String
   status: Boolean
-}
-
-input CreateProductOptionInput {
-  product_id: String
-  sku: String
-  weight: Float
-  weight_unit: String
-  price: Float
-  barcode: String
-  image_position: Float
-  option1: String
-  option2: String
-  option3: String
 }
 
 input UpdateProductOptionInput {

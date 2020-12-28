@@ -1,6 +1,8 @@
 <template>
   <q-page>
-    {{ create_data }}
+    <q-form
+      @submit="createData"
+    >
     <div class="row q-pa-md q-gutter-lg">
       <span class="text-h6 text-bold">បន្ថែមទំនិញថ្មី</span>
       <q-space/>
@@ -12,9 +14,6 @@
         <div class="row q-pa-md">
           <q-card style="min-width: 100%">
             <q-card-section>
-              <q-form
-                @submit=""
-              >
                 <div class="row q-mt-md">
                   <search-select
                     class="col-4"
@@ -62,7 +61,7 @@
                     outlined
                     dense
                     class="full-width"
-                    v-model="create_data.name"
+                    v-model="create_data.title"
                     label="ចំណងជើង"
                     hint="បំពេញឈ្មោះ"
                     :rules="[ val => !!val || 'សូមបំពេញចន្លោះ']"
@@ -88,7 +87,6 @@
                     toolbar-outline v-model="create_data.description"
                     min-height="5rem"/>
                 </div>
-              </q-form>
             </q-card-section>
           </q-card>
         </div>
@@ -106,31 +104,98 @@
               <div class="row q-gutter-sm">
                 <q-checkbox v-model="is_variant" label="តើទំនិញនេះមានជម្រើសច្រើនមែនទ?"/>
                 <q-space/>
+                <q-btn v-if="is_variant" class="text-negative" flat round dense icon="clear" @click="minus"/>
                 <q-btn v-if="is_variant" flat round dense icon="add" @click="plus"/>
               </div>
-              <div v-if="is_variant" :key="index" v-for="(item, index) in create_data.create_variant_input"
-                   class="row q-mt-md">
+<!--              <div v-if="is_variant" v-for="(item, index) in create_data.pre_variants" class="row q-mt-md">
+                  <q-input
+                    outlined
+                    dense
+                    class="col-4"
+                    v-model="item.name"
+                    :label="'ឈ្មោះជម្រើសទី'+(index+1)"
+                    hint="ឧទារហ៍ Color"
+                    :rules="[ val => !!val || 'សូមបំពេញចន្លោះ']"
+                  />
+                  <tag-input
+                    class="col-8 q-pl-xs"
+                    dense outlined
+                    :label="'តម្លៃជម្រើសទី'+(index+1)"
+                    v-model="item.values"
+                    hint="ឧទារហ៍ Black, White..."
+                  >
+                    <q-btn
+                      size="10px" round
+                      icon="delete"
+                      color="red-4" flat
+                      @click="minus(index)"
+                    />
+                  </tag-input>
+                </div>-->
+              <div v-if="variants.v1" class="row q-mt-md">
+                  <q-input
+                    outlined
+                    dense
+                    class="col-4"
+                    v-model="create_data.variant1.name"
+                    label="ឈ្មោះជម្រើសទី១"
+                    hint="ឧទារហ៍ Size"
+                    :rules="[ val => !!val || 'សូមបំពេញចន្លោះ']"
+                  />
+                  <tag-input
+                    :validate="false"
+                    class="col-8 q-pl-xs"
+                    dense outlined
+                    label="តម្លៃជម្រើសទី១"
+                    v-model="create_data.variant1.values"
+                    hint="ឧទារហ៍ Small, Medium..."
+                  >
+<!--                    <q-btn-->
+<!--                      size="10px" round-->
+<!--                      icon="delete"-->
+<!--                      color="red-4" flat-->
+<!--                      @click="minus(1)"-->
+<!--                    />-->
+                  </tag-input>
+              </div>
+              <div v-if="variants.v2" class="row q-mt-md">
                 <q-input
                   outlined
                   dense
                   class="col-4"
-                  v-model="item.name"
-                  label="ឈ្មោះជម្រើស"
+                  v-model="create_data.variant2.name"
+                  label="ឈ្មោះជម្រើសទី២"
                   hint="ឧទារហ៍ Color"
                   :rules="[ val => !!val || 'សូមបំពេញចន្លោះ']"
                 />
                 <tag-input
+                  :validate="false"
                   class="col-8 q-pl-xs"
                   dense outlined
-                  label="តម្លៃជម្រើស"
-                  v-model="item.create_variant_option_input"
+                  label="តម្លៃជម្រើសទី២"
+                  v-model="create_data.variant2.values"
+                  hint="ឧទារហ៍ Black, White..."
                 >
-                  <q-btn
-                    size="10px" round
-                    icon="delete"
-                    color="red-4" flat
-                    @click="minus(index)"
-                  />
+                </tag-input>
+              </div>
+              <div v-if="variants.v3" class="row q-mt-md">
+                <q-input
+                  outlined
+                  dense
+                  class="col-4"
+                  v-model="create_data.variant3.name"
+                  label="ឈ្មោះជម្រើសទី៣"
+                  hint="ឧទារហ៍ Style"
+                  :rules="[ val => !!val || 'សូមបំពេញចន្លោះ']"
+                />
+                <tag-input
+                  :validate="false"
+                  class="col-8 q-pl-xs"
+                  dense outlined
+                  label="តម្លៃជម្រើសទី៣"
+                  v-model="create_data.variant3.values"
+                  hint="ឧទារហ៍ New Style, Old Style..."
+                >
                 </tag-input>
               </div>
             </q-card-section>
@@ -153,10 +218,27 @@
               </div>
               <div class="row q-mt-md">
                 <tag-input
+                  :validate="false"
                   class="full-width"
                   dense outlined
                   label="Tags"
-                  :value="['Good', 'High Rate']"
+                  v-model="create_data.tags"
+                />
+              </div>
+              <div class="row q-mt-md">
+                <q-input
+                  class="full-width"
+                  dense outlined
+                  v-model="create_data.default_price"
+                  label="Price"
+                />
+              </div>
+              <div class="row q-mt-md">
+                <q-input
+                  class="full-width"
+                  dense outlined
+                  v-model="create_data.default_sku"
+                  label="SKU (Stock Keeping Unit)"
                 />
               </div>
             </q-card-section>
@@ -164,11 +246,11 @@
         </div>
       </div>
     </div>
-    <div class="row q-pa-md">
+    <div v-if="is_variant" class="row q-px-md q-pb-md">
       <div class="full-width">
         <q-card style="min-width: 100%">
           <q-card-section>
-            <strong>Other</strong>
+            <strong>បង្កើតជម្រើស</strong>
             <table style="border: #1D1D1D solid 1px"
                    class="q-table q-table--cell-separator">
               <tr>
@@ -186,33 +268,58 @@
                 </th>
                 <th></th>
               </tr>
-              <tr
+<!--              <tr
+                v-show="option.is_create"
                 :key="option_index"
                 v-for="(option, option_index)
-                in matrix"
+                in matrix.arr"
               >
-                <td class="text-secondary">
-                  {{ option }}
+                <td class="text-bold text-secondary" style="width: 20%">
+                  {{ option.name }}
                 </td>
-                <td class="text-secondary">
-                  SKU
+                <td class="text-secondary" style="width: 35%">
+                  <q-input dense outlined v-model="create_data.default" />
                 </td>
-                <td class="text-secondary">
-                  Price
+                <td class="text-secondary" style="width: 20%">
+                  <q-input dense outlined v-model="create_data.price" />
                 </td>
-                <td class="text-secondary">
-                  Barcode
+                <td class="text-secondary" style="width: 20%">
+                  <q-input dense outlined v-model="create_data.barcode" />
                 </td>
-                <td class="text-negative">
-                  <q-btn flat round icon="fas fa-trash-alt"/>
+                <td class="text-negative" style="width: 5%">
+                  <q-btn @click="removeSku(option.is_create, option_index)" flat round icon="fas fa-trash-alt"/>
                 </td>
-              </tr>
+              </tr>-->
+                <tr :key="index" v-if="option.is_create" v-for="(option, index) in pre_product_option">
+                  <td class="text-bold text-secondary" style="width: 20%">
+                    {{option.label}}
+                  </td>
+                  <td class="text-secondary" style="width: 35%">
+                    <q-input dense outlined v-model="option.sku" />
+                  </td>
+                  <td class="text-secondary" style="width: 20%">
+                    <q-input dense outlined v-model="option.price" />
+                  </td>
+                  <td class="text-secondary" style="width: 20%">
+                    <q-input dense outlined v-model="option.barcode" />
+                  </td>
+                  <td class="text-negative" style="width: 5%">
+                    <q-btn flat round @click="removeSku(index)" icon="fas fa-trash-alt"/>
+                  </td>
+                </tr>
             </table>
           </q-card-section>
+          {{mapped}}
         </q-card>
       </div>
     </div>
-
+    <q-separator/>
+    <div class="q-pb-lg q-px-lg row q-mt-md">
+      <q-space/>
+      <q-btn rounded flat class="bg-blue-1" color="primary" type="submit"
+             label="រក្សាទុក"/>
+    </div>
+    </q-form>
   </q-page>
 </template>
 
@@ -220,21 +327,22 @@
 
 import SearchSelect from "components/SearchSelect.vue";
 import {computed, reactive, ref, watch} from "@vue/composition-api";
-import {createProduct} from "pages/setting/product-old/store/product.store";
 import {category_graphql} from "pages/setting/sub-setting/category/graphql/category.graphql";
 import {filter_sub_categories_graphql} from "pages/setting/sub-setting/sub-category/graphql/sub-category.graphql";
 import {brand_graphql} from "pages/setting/sub-setting/brand/graphql/brand.graphql";
 import TagInput from "components/TagInput.vue";
+import {createProduct} from "pages/setting/product/store/product.store";
 
 export default {
   name: "Product.create",
   components: {TagInput, SearchSelect},
   setup(props: any, context: any) {
     const is_variant = ref(false);
-    const query = reactive({
-      categories: category_graphql,
-      sub_categories: filter_sub_categories_graphql,
-      brands: brand_graphql,
+    const sub_cate = ref();
+    const variants = reactive({
+      v1: false,
+      v2: false,
+      v3: false,
     });
 
     const sub_category_condition = reactive({
@@ -245,80 +353,142 @@ export default {
       }
     });
 
-    const matrix = computed(() => {
-      let result = [];
-      const variant = create_data.value.create_variant_input;
-      if (variant?.length === 1) {// @ts-ignore
-        result = variant[0].create_variant_option_input
-      } else if (variant?.length === 2) {
-        //@ts-ignore
-        const variant1 = variant[0].create_variant_option_input;
-        //@ts-ignore
-        const variant2 = variant[1].create_variant_option_input;
-        // @ts-ignore
-        for (let i = 0; i < variant1?.length; i++) {
-          for (let j = 0; j < variant2?.length; j++) {
-            // @ts-ignore
-            result.push(variant1[i] + '/' + variant2[j])
-          }
-        }
+    const query = reactive({
+      categories: category_graphql,
+      sub_categories: filter_sub_categories_graphql,
+      brands: brand_graphql,
+    });
+
+    const filter_sub_category = computed(() => {
+      const copy = Object.assign({}, JSON.parse(JSON.stringify(sub_category_condition.filter)));
+      if (copy.category_id.$eq == null) {
+        delete copy.category_id
       } else {
-        //@ts-ignore
-        const variant1 = variant[0].create_variant_option_input;
-        //@ts-ignore
-        const variant2 = variant[1].create_variant_option_input;
-        //@ts-ignore
-        const variant3 = variant[2].create_variant_option_input;
         // @ts-ignore
-        for (let i = 0; i < variant1?.length; i++) {
-          for (let j = 0; j < variant2?.length; j++) {
-            for (let k = 0; k < variant3?.length; k++) {
-              // @ts-ignore
-              result.push(variant1[i] + '/' + variant2[j] + '/' + variant3[k])
-            }
-          }
-        }
+        copy.category_id.$eq = copy.category_id.$eq?._id
       }
-      return result;
+      return copy;
     })
 
-    watch(is_variant, (val: any) => {
-      if (is_variant.value === false) {
-        create_data.value.create_variant_input = [{create_variant_option_input: []}]
+    watch(() => filter_sub_category.value, (val) => {
+      sub_cate.value.filterSelect(val)
+    });
+
+    watch(is_variant, () => {
+      if (is_variant.value){
+        variants.v1 = true;
+      }else {
+        variants.v1 = false;
+        create_data.value.variant1 = {name: 'Size', values: []}
+        variants.v2 = false;
+        create_data.value.variant2 = {name: 'Color', values: []}
+        variants.v3 = false;
+        create_data.value.variant3 = {name: 'Style', values: []}
       }
     })
 
     function plus() {
-      //@ts-ignore
-      if (create_data?.value?.create_variant_input?.length < 3) {
-        create_data?.value?.create_variant_input?.push({product_id: '', name: '', create_variant_option_input: []})
+      if (variants.v1 === true && variants.v2 === false){
+        variants.v2 = true
+      }else if (variants.v2 && variants.v3 === false){
+        variants.v3 = true;
       }
     }
 
-    function minus(index: number) {
-      //@ts-ignore
-      if (create_data?.value?.create_variant_input?.length > 1) {
-        create_data?.value?.create_variant_input?.splice(index, 1)
+    function minus() {
+      if (variants.v3 && variants.v2 && variants.v1){
+        variants.v3 = false;
+        create_data.value.variant3 = {name: 'Style', values: []}
+      } else if (variants.v2 && variants.v1){
+        variants.v2 = false;
+        create_data.value.variant2 = {name: 'Color', values: []}
       } else {
         is_variant.value = false;
       }
     }
 
     function removeSku(index: number) {
-
+      pre_product_option.value[index].is_create = false;
     }
 
-    const {create_data, createData, mapped} = createProduct(props, context);
+    const {create_data, createData, mapped, pre_product_option} = createProduct(props, context);
+
+    watch(create_data.value, (val: any)=> {
+      if (variants.v1 && !variants.v2 && !variants.v3){
+        pre_product_option.value = [];
+        if (val.variant1.values){
+          for (let i = 0; i < val.variant1.values.length; i ++){
+            pre_product_option.value.push({
+              product_id: '',
+              sku: create_data.value.default_sku === undefined ? "" : create_data.value.default_sku+'-'+(i + 1),
+              price: create_data.value.default_price,
+              barcode: '',
+              option1: val.variant1.values[i],
+              label: val.variant1.values[i],
+            })
+          }
+        }
+      }else if (variants.v1 && variants.v2 && !variants.v3){
+        let i1 = 0;
+        pre_product_option.value = [];
+        if (val.variant1.values && val.variant2.values){
+          for (let i = 0; i < val.variant1.values.length; i ++){
+            for (let j = 0; j < val.variant2.values.length; j ++){
+              i1 ++;
+              pre_product_option.value.push({
+                product_id: '',
+                sku: create_data.value.default_sku === undefined ? "" : create_data.value.default_sku+'-'+i1,
+                price: create_data.value.default_price,
+                barcode: '',
+                option1: val.variant1.values[i],
+                option2: val.variant2.values[j],
+                label: val.variant1.values[i]+'/'+val.variant2.values[j],
+                is_create: true
+              })
+            }
+          }
+        }
+      }else if(variants.v1 && variants.v2 && variants.v3) {
+        let i1 = 0;
+        pre_product_option.value = [];
+        if(val.variant1.values && val.variant2.values && val.variant3.values){
+          for (let i = 0; i < val.variant1.values.length; i ++){
+            for (let j = 0; j < val.variant2.values.length; j ++){
+              for (let k = 0; k < val.variant3.values.length; k ++){
+                i1 ++;
+                pre_product_option.value.push({
+                  product_id: '',
+                  sku: create_data.value.default_sku === undefined ? "" : create_data.value.default_sku+'-'+i1,
+                  price: create_data.value.default_price,
+                  barcode: '',
+                  option1: val.variant1.values[i],
+                  option2: val.variant2.values[j],
+                  option3: val.variant3.values[k],
+                  label:  val.variant1.values[i]+'/'+val.variant2.values[j]+'/'+val.variant3.values[k],
+                  is_create: true
+                })
+              }
+            }
+          }
+        }
+      }
+    })
 
     return {
       query,
       sub_category_condition,
+      sub_cate,
+      filter_sub_category,
       create_data,
       is_variant,
       plus, minus,
-      matrix,
+      mapped,
+      createData,
+      removeSku,
+      variants,
+      pre_product_option
     }
-  }
+  },
 }
 </script>
 

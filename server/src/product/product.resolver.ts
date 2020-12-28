@@ -62,7 +62,7 @@ export class ProductResolver {
 
   @ResolveField(() => SubCategoryType)
   sub_category(@Parent() product: ProductModel) {
-    return this.subCategoryService.findByParent(product.sub_category_id);
+    return this.subCategoryService.findByProduct(product.sub_category_id);
   }
 
   @ResolveField(() => BrandType)

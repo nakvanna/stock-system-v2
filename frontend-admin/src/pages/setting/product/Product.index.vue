@@ -45,7 +45,7 @@
         <e-column field='category' headerText='ប្រភេទ' textAlign='Left' width="150"/>
         <e-column field='sub_category' headerText='ប្រភេទរង' textAlign='Left' width="150"/>
         <e-column field='brand' headerText='ម៉ូដ' textAlign='Left' width="150"/>
-        <e-column field='name' headerText='ឈ្មោះទំនិញ' textAlign='Left' width="150"/>
+        <e-column field='title' headerText='ឈ្មោះទំនិញ' textAlign='Left' width="150"/>
         <e-column field='description' headerText='ចំណាំ' textAlign='Left' width="150"/>
         <e-column field='createdAt' headerText='កាលបរិច្ឆេទ' format="d/M/y" type="date" textAlign='Left'/>
       </e-columns>

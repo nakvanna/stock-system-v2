@@ -1,25 +1,36 @@
-import {VariantModel} from "../view/variant/model/variant.model";
-
 export interface ProductModel {
   _id?: string;
   sub_category_id?: string | any;
   brand_id?: string | any;
-  name?: string;
-  slug?: string;
-  description?: string;
-  thumbnail?: string;
+  title: string;
+  description: string;
+  tags: string[];
+  product_status: string;
+  variant1: OptionModel;
+  variant2: OptionModel;
+  variant3: OptionModel;
   status?: boolean;
-  create_variant_input?: [VariantModel];
+  create_product_option_input: [ProductOptionModel] | any;
+  //Just To Store before map
+  pre_variants?: [OptionModel] | any;
+  default_sku?: string;
+  default_price?: number;
 }
 
-// export interface VariantModel {
-//   product_id: string
-//   name: string
-//   create_variant_option_input?: [VariantOptionModel] | string[];
-// }
+export interface OptionModel {
+  name?: string;
+  values?: string[] | any;
+}
 
-// export interface VariantOptionModel {
-//   variant_id: string
-//   name: string
-// }
-
+export interface ProductOptionModel {
+  product_id: string;
+  sku?: string;
+  weight?: number;
+  weight_unit?: string;
+  price?: number;
+  barcode?: string;
+  image_position?: number;
+  option1?: string;
+  option2?: string;
+  option3?: string;
+}

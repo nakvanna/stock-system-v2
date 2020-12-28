@@ -90,7 +90,7 @@ export class SubCategoryService {
     }
   }
 
-  async findByParent(_id: string): Promise<SubCategoryModel> {
+  async findByProduct(_id: string): Promise<SubCategoryModel> {
     return this.model.findOne({_id})
   }
 }
