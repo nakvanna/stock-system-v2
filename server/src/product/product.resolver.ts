@@ -34,7 +34,20 @@ export class ProductResolver {
 
   @Mutation(() => ProductType)
   async createProduct(@Args('create_input') create_input: CreateProductInput) {
-    return await this.service.create(create_input);
+    const product = await this.service.create(create_input);
+    if (product.success){
+      create_input.create_product_option_input.map(async (m: any)=> {
+        console.log({
+          ...m,//@ts-ignore
+          product_id: product._id
+        })
+        await this.productOptionService.create({
+          ...m,//@ts-ignore
+          product_id: product._id
+        })
+      })
+    }
+    return product;
   }
 
   @Query(() => ProductCursorPagination, { name: 'products' })

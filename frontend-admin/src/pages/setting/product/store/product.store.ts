@@ -47,11 +47,11 @@ export function createProduct(prop: any, context: any) {
 
   //--computed--//
   const mapped = computed(function () {
-    console.log(create_data.value.variant1.values.length)
     const copy = Object.assign({}, create_data.value);
     delete copy.pre_variants;
     delete copy.default_price;
     delete copy.default_sku;
+    const copy_pre_product_option = JSON.parse(JSON.stringify(pre_product_option.value));
     return {
       ...copy,
       sub_category_id: create_data.value.sub_category_id?._id,
@@ -59,7 +59,10 @@ export function createProduct(prop: any, context: any) {
       variant1: create_data.value.variant1.values.length === 0 ? null: create_data.value.variant1,
       variant2: create_data.value.variant2.values.length === 0 ? null: create_data.value.variant2,
       variant3: create_data.value.variant3.values.length === 0 ? null: create_data.value.variant3,
-      create_product_option_input: []
+      create_product_option_input: copy_pre_product_option.map((m: any) => {
+        delete m.label;
+        return {...m}
+      })
     }
   });
   //--end-computed--//

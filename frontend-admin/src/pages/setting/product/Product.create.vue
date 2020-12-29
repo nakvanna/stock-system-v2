@@ -229,7 +229,7 @@
                 <q-input
                   class="full-width"
                   dense outlined
-                  v-model="create_data.default_price"
+                  v-model.number="create_data.default_price"
                   label="Price"
                 />
               </div>
@@ -268,29 +268,7 @@
                 </th>
                 <th></th>
               </tr>
-<!--              <tr
-                v-show="option.is_create"
-                :key="option_index"
-                v-for="(option, option_index)
-                in matrix.arr"
-              >
-                <td class="text-bold text-secondary" style="width: 20%">
-                  {{ option.name }}
-                </td>
-                <td class="text-secondary" style="width: 35%">
-                  <q-input dense outlined v-model="create_data.default" />
-                </td>
-                <td class="text-secondary" style="width: 20%">
-                  <q-input dense outlined v-model="create_data.price" />
-                </td>
-                <td class="text-secondary" style="width: 20%">
-                  <q-input dense outlined v-model="create_data.barcode" />
-                </td>
-                <td class="text-negative" style="width: 5%">
-                  <q-btn @click="removeSku(option.is_create, option_index)" flat round icon="fas fa-trash-alt"/>
-                </td>
-              </tr>-->
-                <tr :key="index" v-if="option.is_create" v-for="(option, index) in pre_product_option">
+                <tr :key="index" v-for="(option, index) in pre_product_option">
                   <td class="text-bold text-secondary" style="width: 20%">
                     {{option.label}}
                   </td>
@@ -298,7 +276,7 @@
                     <q-input dense outlined v-model="option.sku" />
                   </td>
                   <td class="text-secondary" style="width: 20%">
-                    <q-input dense outlined v-model="option.price" />
+                    <q-input dense outlined v-model.number="option.price" />
                   </td>
                   <td class="text-secondary" style="width: 20%">
                     <q-input dense outlined v-model="option.barcode" />
@@ -408,14 +386,14 @@ export default {
     }
 
     function removeSku(index: number) {
-      pre_product_option.value[index].is_create = false;
+      pre_product_option.value.splice(index, 1);
     }
 
     const {create_data, createData, mapped, pre_product_option} = createProduct(props, context);
 
     watch(create_data.value, (val: any)=> {
+      pre_product_option.value = [];
       if (variants.v1 && !variants.v2 && !variants.v3){
-        pre_product_option.value = [];
         if (val.variant1.values){
           for (let i = 0; i < val.variant1.values.length; i ++){
             pre_product_option.value.push({
@@ -423,6 +401,9 @@ export default {
               sku: create_data.value.default_sku === undefined ? "" : create_data.value.default_sku+'-'+(i + 1),
               price: create_data.value.default_price,
               barcode: '',
+              weight: 0,
+              weight_unit: "kg",
+              image_position: 0,
               option1: val.variant1.values[i],
               label: val.variant1.values[i],
             })
@@ -430,8 +411,8 @@ export default {
         }
       }else if (variants.v1 && variants.v2 && !variants.v3){
         let i1 = 0;
-        pre_product_option.value = [];
         if (val.variant1.values && val.variant2.values){
+          pre_product_option.value = [];
           for (let i = 0; i < val.variant1.values.length; i ++){
             for (let j = 0; j < val.variant2.values.length; j ++){
               i1 ++;
@@ -440,17 +421,18 @@ export default {
                 sku: create_data.value.default_sku === undefined ? "" : create_data.value.default_sku+'-'+i1,
                 price: create_data.value.default_price,
                 barcode: '',
+                weight: 0,
+                weight_unit: "kg",
+                image_position: 0,
                 option1: val.variant1.values[i],
                 option2: val.variant2.values[j],
                 label: val.variant1.values[i]+'/'+val.variant2.values[j],
-                is_create: true
               })
             }
           }
         }
       }else if(variants.v1 && variants.v2 && variants.v3) {
         let i1 = 0;
-        pre_product_option.value = [];
         if(val.variant1.values && val.variant2.values && val.variant3.values){
           for (let i = 0; i < val.variant1.values.length; i ++){
             for (let j = 0; j < val.variant2.values.length; j ++){
@@ -461,11 +443,13 @@ export default {
                   sku: create_data.value.default_sku === undefined ? "" : create_data.value.default_sku+'-'+i1,
                   price: create_data.value.default_price,
                   barcode: '',
+                  weight: 0,
+                  weight_unit: "kg",
+                  image_position: 0,
                   option1: val.variant1.values[i],
                   option2: val.variant2.values[j],
                   option3: val.variant3.values[k],
                   label:  val.variant1.values[i]+'/'+val.variant2.values[j]+'/'+val.variant3.values[k],
-                  is_create: true
                 })
               }
             }
