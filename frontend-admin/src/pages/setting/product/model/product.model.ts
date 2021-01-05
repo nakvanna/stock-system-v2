@@ -1,3 +1,5 @@
+import {ProductOptionModel} from "pages/setting/product/view/model/product-option.model";
+
 export interface ProductModel {
   _id?: string;
   sub_category_id?: string | any;
@@ -20,17 +22,4 @@ export interface ProductModel {
 export interface OptionModel {
   name?: string;
   values?: string[] | any;
-}
-
-export interface ProductOptionModel {
-  product_id: string;
-  sku?: string;
-  weight?: number;
-  weight_unit?: string;
-  price?: number;
-  barcode?: string;
-  image_position?: number;
-  option1?: string;
-  option2?: string;
-  option3?: string;
 }

@@ -59,7 +59,15 @@ export function createProduct(prop: any, context: any) {
       variant1: create_data.value.variant1.values.length === 0 ? null: create_data.value.variant1,
       variant2: create_data.value.variant2.values.length === 0 ? null: create_data.value.variant2,
       variant3: create_data.value.variant3.values.length === 0 ? null: create_data.value.variant3,
-      create_product_option_input: copy_pre_product_option.map((m: any) => {
+      create_product_option_input: copy_pre_product_option.length === 0? [{
+        product_id: '',
+        sku: create_data.value.default_sku,
+        weight :0,
+        weight_unit:"kg",
+        image_position: 0,
+        price: create_data.value.default_price,
+        barcode: ''
+      }] : copy_pre_product_option.map((m: any) => {
         delete m.label;
         return {...m}
       })

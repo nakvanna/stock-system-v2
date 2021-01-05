@@ -1,12 +1,13 @@
 <template>
   <q-page>
+    {{mapped}}
     <q-form
       @submit="createData"
     >
     <div class="row q-pa-md q-gutter-lg">
       <span class="text-h6 text-bold">បន្ថែមទំនិញថ្មី</span>
       <q-space/>
-      <q-btn outline icon="fas fa-arrow-alt-circle-left"/>
+      <q-btn outline to="/settings" icon="fas fa-arrow-alt-circle-left"/>
     </div>
     <q-separator/>
     <div class="row">
@@ -287,7 +288,6 @@
                 </tr>
             </table>
           </q-card-section>
-          {{mapped}}
         </q-card>
       </div>
     </div>

@@ -26,8 +26,39 @@ export const product_graphql = gql`
             _id
             name
           }
+          variant1{
+            name
+            values
+          }
+          variant2{
+            name
+            values
+          }
+          variant3{
+            name
+            values
+          }
+          product_media{
+            position
+            src
+            alt
+          }
+          product_option{
+            _id
+            sku
+            weight
+            price
+            image_position
+            barcode
+            option1
+            option2
+            option3
+            status
+          }
           title
           description
+          tags
+          product_status
           createdAt
         }
       }

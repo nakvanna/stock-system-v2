@@ -1,192 +1,467 @@
 <template>
-  <div>
-    <q-page class="q-px-xs">
-      <q-card square>
-        <q-card-section class="q-pb-none">
-          <div class="row">
-            <!--Left Tab-->
-            <q-tabs
-              dense
-              v-model="tab"
-              align="left"
-              inline-label
-              class="text-grey"
-              active-color="primary"
-              indicator-color="primary"
-            >
-              <q-tab name="product-view" label="បង្ហាញទំនិញ"/>
-              <q-tab name="variant-option" label="បង្ហាញជម្រើស"/>
-            </q-tabs>
-            <q-space/>
-            <!--Right Tab-->
-            <q-tabs
-              dense
-              align="left"
-              inline-label
-              class="text-grey"
-              active-color="primary"
-              indicator-color="primary"
-            >
-              <q-route-tab to="/settings" icon="fas fa-arrow-alt-circle-left" exact/>
-            </q-tabs>
+  <q-page>
+    <q-form
+      @submit=""
+    >
+      <div class="row q-pa-md q-gutter-lg">
+        <span class="text-h6 text-bold">បន្ថែមទំនិញថ្មី</span>
+        <q-space/>
+        <q-btn outline to="/settings" icon="fas fa-arrow-alt-circle-left"/>
+      </div>
+      <q-separator/>
+      <div class="row">
+        <div class="col-8">
+          <div class="row q-pa-md">
+            <q-card style="min-width: 100%">
+              <q-card-section>
+                <div class="row q-mt-md">
+                  <q-input
+                    outlined
+                    dense
+                    class="full-width"
+                    v-model="selected_product.title"
+                    label="ចំណងជើង"
+                    hint="បំពេញឈ្មោះ"
+                    :rules="[ val => !!val || 'សូមបំពេញចន្លោះ']"
+                  />
+                </div>
+                <div class="row q-mt-md">
+                  <strong>ពណ៌នា</strong>
+                  <q-editor
+                    class="full-width" :toolbar="[
+                  [
+                    {
+                      label: $q.lang.editor.align,
+                      icon: $q.iconSet.editor.align,
+                      fixedLabel: true,
+                      list: 'only-icons',
+                      options: ['left', 'center', 'right', 'justify']
+                    }
+                  ],
+                  ['bold', 'italic', 'strike', 'underline'],
+                  ['undo', 'redo'],
+                  ['viewsource']
+                ]"
+                    toolbar-outline v-model="selected_product.description"
+                    min-height="5rem"/>
+                </div>
+              </q-card-section>
+            </q-card>
           </div>
-          <q-separator/>
-          <q-tab-panels v-model="tab" animated>
-            <q-tab-panel name="product-view">
-              <table class="q-table q-table--cell-separator">
-                <tr>
-                  <th class="text-left"></th>
-                  <th class="text-left">ឈ្មោះទំនិញ</th>
-                  <th class="text-left">ឈ្មោះ Slug</th>
-                  <th class="text-left">ចំណាំ</th>
-                </tr>
-                <tr>
-                  <td class="text-right text-blue-5 text-bold" style="width: 150px">
-                    <div class="column q-ma-sm">
-                      <q-avatar @click="isImgPicker = true" size="70px" class="shadow-3 cursor-pointer">
-                        <q-img :src="selected_product.thumbnail"/>
-                      </q-avatar>
-                      <image-cropper :uploaded.sync="selected_product.thumbnail" v-model="isImgPicker"
-                                     :img-src="selected_product.thumbnail"/>
-                      <div class="text-right">
-                        <q-btn @click="updateData(selected_product._id,'profile',selected_product.profile)" icon="save"
-                               size="10px" dense
-                               flat color="orange-4" rounded/>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="text-secondary">
-                    {{ selected_product.name }}
-                    <q-popup-edit @save="updateData(selected_product._id, 'name', selected_product.name)"
-                                  v-model="selected_product.name">
-                      <q-input v-model="selected_product.name" dense autofocus/>
-                    </q-popup-edit>
-                  </td>
-                  <td class="text-secondary">
-                    {{ selected_product.slug }}
-                    <q-popup-edit @save="updateData(selected_product._id, 'slug', selected_product.slug)"
-                                  v-model="selected_product.slug">
-                      <q-input v-model="selected_product.slug" dense autofocus/>
-                    </q-popup-edit>
-                  </td>
-                  <td class="text-secondary">
-                    {{ selected_product.description }}
-                    <q-popup-edit
-                      @save="updateData(selected_product._id, 'description', selected_product.description)"
-                      label-set="កែប្រែ" label-cancel="បិទ" v-model="selected_product.description" buttons
-                      title="ចំណាំ">
-                      <q-input
-                        @keyup.stop
-                        rows="2" type="textarea"
-                        v-model="selected_product.description"
-                        dense autofocus
-                      />
-                    </q-popup-edit>
-                  </td>
-                </tr>
-              </table>
-            </q-tab-panel>
-
-            <q-tab-panel name="variant-option">
-              <div>
-                <table v-if="selected_product" class="q-table q-table--cell-separator">
-                  <tr>
-                    <th class="text-left">
-                      វ៉ារ្យ៉ង់
-                      <q-btn v-if="selected_product._id" @click="dialog.variant_create = true" flat round icon="add"/>
-                    </th>
-                    <th class="text-left">
-                      តម្លៃវ៉ារ្យ៉ង់
-                    </th>
-                  </tr>
-                  <tr :key="index" v-for="(item, index) in selected_product.variant">
-                    <td class="text-secondary">
-                      {{ item.name }}
-                      <q-popup-edit @save="updateVariantData(item._id, 'name', item.name)"
-                                    v-model="item.name">
-                        <q-input v-model="item.name" dense autofocus/>
-                      </q-popup-edit>
-                    </td>
-                    <td class="text-secondary">
-                      <span :key="ind" class="q-pr-lg" v-for="(itm, ind) in item.variant_option">
-                        {{ itm.name }}
-                        <q-popup-edit @save="updateVariantOptionData(itm._id, 'name', itm.name)"
-                                      v-model="itm.name">
-                        <q-input v-model="itm.name" dense autofocus/>
-                      </q-popup-edit>
-                      </span>
-                      <q-btn v-if="selected_product._id" @click="showVariantOption(item._id)" flat round
-                             icon="add"/>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-            </q-tab-panel>
-          </q-tab-panels>
-          <q-separator/>
-        </q-card-section>
-      </q-card>
-      <variant-create :product_id="selected_product._id" v-model="dialog.variant_create"/>
-      <variant-option-create :variant_id="variant_id" v-model="dialog.variant_option_create"/>
-    </q-page>
-  </div>
+          <div class="row q-pa-md">
+            <q-card style="min-width: 100%">
+              <q-card-section>
+                <strong>Media</strong>
+                <div class="row q-gutter-md q-ma-md">
+                  <q-img
+                    :key="img_index"
+                    v-for="(img, img_index) in selected_product.product_media"
+                    spinner-color="red"
+                    :src="img.src"
+                    style="width: 180px"
+                  />
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+<!--          2Variants-->
+          <div
+            v-if="selected_product.variant1 !== null && selected_product.variant2 !== null && selected_product.variant3 === null"
+            class="q-pa-md"
+          >
+            <q-table
+              :data="selected_product.product_option"
+              :columns="columns.column2"
+              row-key="sku"
+              selection="multiple"
+              :selected.sync="selected"
+              :rows-per-page-options="[0]"
+            >
+              <template v-slot:top>
+                <div>
+                  <q-btn
+                    flat color="primary"
+                    :key="'variant1'+index" v-for="(variant, index) in selected_product.variant1.values"
+                    @click="filterSelected('option1',variant)" :label="variant"
+                  />
+                  <q-btn
+                    flat color="primary"
+                    :key="'variant2'+index" v-for="(variant, index) in selected_product.variant2.values"
+                    @click="filterSelected('option2',variant)" :label="variant"
+                  />
+                </div>
+                  <q-space/>
+                  <div v-if="selected.length !== 0">
+                    <q-btn @click="setImagePosition(selected.map(m => m._id))" flat color="primary" label="Add Image"/>
+                    <q-btn flat color="primary" label="Remove Image"/>
+                  </div>
+              </template>
+              <template v-slot:body="props">
+                <q-tr :props="props">
+                  <q-td>
+                    <q-checkbox v-model="props.selected" />
+                  </q-td>
+                  <q-td key="image_position" :props="props">
+                    <q-img
+                      v-if="props.row.image_position === 0"
+                      @click="setImagePosition([props.row._id])"
+                      class="cursor-pointer"
+                      spinner-color="red"
+                      :src="default_image"
+                      style="height: 40px; width: 40px"
+                    />
+                    <q-img
+                      v-else
+                      @click="setImagePosition([props.row._id])"
+                      class="cursor-pointer"
+                      spinner-color="red"
+                      :src="selected_product.product_media.filter(f => f.position === props.row.image_position)[0].src"
+                      style="height: 40px; width: 40px"
+                    />
+                  </q-td>
+                  <q-td key="option1" :props="props">
+                    {{props.row.option1}}
+                  </q-td>
+                  <q-td key="option2" :props="props">
+                    {{props.row.option2}}
+                  </q-td>
+                  <q-td key="price" :props="props">
+                    ${{props.row.price.toFixed(2)}}
+                  </q-td>
+                  <q-td key="sku" :props="props">
+                    {{props.row.sku}}
+                  </q-td>
+                  <q-td key="barcode" :props="props">
+                    {{props.row.barcode}}
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
+          </div>
+<!--          3Variants-->
+          <div
+            v-if="selected_product.variant1 !== null && selected_product.variant2 !== null && selected_product.variant3 !== null"
+            class="q-pa-md"
+          >
+            <q-table
+              :data="selected_product.product_option"
+              :columns="columns.column3"
+              row-key="sku"
+              selection="multiple"
+              :selected.sync="selected"
+              :rows-per-page-options="[0]"
+            >
+              <template v-slot:top>
+                <div>
+                  <q-btn
+                    flat color="primary"
+                    :key="'variant1'+index" v-for="(variant, index) in selected_product.variant1.values"
+                    @click="filterSelected('option1',variant)" :label="variant"
+                  />
+                  <q-btn
+                    flat color="primary"
+                    :key="'variant2'+index" v-for="(variant, index) in selected_product.variant2.values"
+                    @click="filterSelected('option2',variant)" :label="variant"
+                  />
+                  <q-btn
+                    flat color="primary"
+                    :key="'variant3'+index" v-for="(variant, index) in selected_product.variant3.values"
+                    @click="filterSelected('option3',variant)" :label="variant"
+                  />
+                </div>
+                  <q-space/>
+                  <div v-if="selected.length !== 0">
+                    <q-btn @click="setImagePosition(selected.map(m => m._id))" flat color="primary" label="Add Image"/>
+                    <q-btn flat color="primary" label="Remove Image"/>
+                  </div>
+              </template>
+              <template v-slot:body="props">
+                <q-tr :props="props">
+                  <q-td>
+                    <q-checkbox v-model="props.selected" />
+                  </q-td>
+                  <q-td key="image_position" :props="props">
+                    <q-img
+                      v-if="props.row.image_position === 0"
+                      @click="setImagePosition([props.row._id])"
+                      class="cursor-pointer"
+                      spinner-color="red"
+                      :src="default_image"
+                      style="height: 40px; width: 40px"
+                    />
+                    <q-img
+                      v-else
+                      @click="setImagePosition([props.row._id])"
+                      class="cursor-pointer"
+                      spinner-color="red"
+                      :src="selected_product.product_media.filter(f => f.position === props.row.image_position)[0].src"
+                      style="height: 40px; width: 40px"
+                    />
+                  </q-td>
+                  <q-td key="option1" :props="props">
+                    {{props.row.option1}}
+                  </q-td>
+                  <q-td key="option2" :props="props">
+                    {{props.row.option2}}
+                  </q-td>
+                  <q-td key="option3" :props="props">
+                    {{props.row.option3}}
+                  </q-td>
+                  <q-td key="price" :props="props">
+                    ${{props.row.price.toFixed(2)}}
+                  </q-td>
+                  <q-td key="sku" :props="props">
+                    {{props.row.sku}}
+                  </q-td>
+                  <q-td key="barcode" :props="props">
+                    {{props.row.barcode}}
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="row q-pa-md">
+            <q-card style="min-width: 100%">
+              <q-card-section>
+                <strong>Other</strong>
+                <div class="row q-mt-md">
+                  <q-select
+                    outlined dense
+                    class="full-width"
+                    v-model="selected_product.product_status"
+                    :options="['Draft', 'Active']"
+                    label="Status"
+                  />
+                </div>
+                <div class="row q-mt-md">
+                  <tag-input
+                    :validate="false"
+                    class="full-width"
+                    dense outlined
+                    label="Tags"
+                    v-model="selected_product.tags"
+                  />
+                </div>
+                <div class="row q-mt-md">
+                  <q-input
+                    class="full-width"
+                    dense outlined
+                    v-model.number="selected_product.product_option[0].price"
+                    label="Price"
+                  />
+                </div>
+                <div class="row q-mt-md">
+                  <q-input
+                    class="full-width"
+                    dense outlined
+                    v-model="selected_product.product_option[0].sku"
+                    label="SKU (Stock Keeping Unit)"
+                  />
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
+      </div>
+    </q-form>
+    <add-variant-image :dialog.sync="dialog.add_variant_image" :variant_ids.sync="img_id" v-model="selected_product.product_media"/>
+  </q-page>
 </template>
 
 <script lang="ts">
-import {reactive, ref} from "@vue/composition-api";
-import {selected_product, updateProduct} from "./store/product.store";
-import DataTable from 'components/DataTable.vue';
 import SearchSelect from "components/SearchSelect.vue";
-import {category_graphql} from "../sub-setting/category/graphql/category.graphql";
-import {filter_sub_categories_graphql} from "../sub-setting/sub-category/graphql/sub-category.graphql";
-import {brand_graphql} from "../sub-setting/brand/graphql/brand.graphql";
-import ImageCropper from "components/ImageCropper.vue";
-import {updateVariant} from "pages/setting/product-old/view/variant/store/variant.store";
-import {updateVariantOption} from "pages/setting/product-old/view/variant/view/variant-option/store/variant-option.store";
-import VariantCreate from "pages/setting/product-old/view/variant/Variant.create.vue";
-import VariantOptionCreate from "pages/setting/product-old/view/variant/view/variant-option/VariantOption.create.vue";
+import { selected_product } from './store/product.store'
+import {computed, reactive, ref, watch} from "@vue/composition-api";
+import {category_graphql} from "pages/setting/sub-setting/category/graphql/category.graphql";
+import {filter_sub_categories_graphql} from "pages/setting/sub-setting/sub-category/graphql/sub-category.graphql";
+import {brand_graphql} from "pages/setting/sub-setting/brand/graphql/brand.graphql";
+import TagInput from "components/TagInput.vue";
+import AddVariantImage from "pages/setting/product/AddVariantImage.vue";
 
 export default {
-  name: "Product.view",
-  components: {VariantOptionCreate, VariantCreate, DataTable, SearchSelect, ImageCropper},
-  setup(props: any, context: any) {
-    const isImgPicker = ref(false);
+  name: "ProductView",
+  components: {AddVariantImage, TagInput, SearchSelect, selected_product},
+  setup(){
+    const default_image = "https://redzonekickboxing.com/wp-content/uploads/2017/04/default-image-620x600.jpg";
+    const img_id = ref();
+    const sub_cate = ref();
+    const check_all = ref(false)
+    const selected = ref([]);
+    const columns = reactive({
+      column1: [],
+      column2: [
+        {
+          name: 'image_position',
+          required: true,
+          label: 'រូបភាព',
+          align: 'left',
+          field: 'image_position',
+          sortable: true
+        },
+        {
+          name: 'option1',
+          required: true,
+          label: 'Option1',
+          align: 'left',
+          field: 'option1',
+          sortable: true
+        },
+        {
+          name: 'option2',
+          required: true,
+          label: 'Option2',
+          align: 'left',
+          field: 'option2',
+          sortable: true
+        },
+        {
+          name: 'price',
+          required: true,
+          label: 'តម្លៃ',
+          align: 'left',
+          field: 'price',
+          sortable: true
+        },
+        {
+          name: 'sku',
+          required: true,
+          label: 'SKU',
+          align: 'left',
+          field: 'sku',
+          sortable: true
+        },
+        {
+          name: 'barcode',
+          required: true,
+          label: 'Barcode',
+          align: 'left',
+          field: 'barcode',
+          sortable: true
+        },
+      ],
+      column3: [
+        {
+          name: 'image_position',
+          required: true,
+          label: 'រូបភាព',
+          align: 'left',
+          field: 'image_position',
+          sortable: true
+        },
+        {
+          name: 'option1',
+          required: true,
+          label: 'Option1',
+          align: 'left',
+          field: 'option1',
+          sortable: true
+        },
+        {
+          name: 'option2',
+          required: true,
+          label: 'Option2',
+          align: 'left',
+          field: 'option2',
+          sortable: true
+        },
+        {
+          name: 'option3',
+          required: true,
+          label: 'Option3',
+          align: 'left',
+          field: 'option3',
+          sortable: true
+        },
+        {
+          name: 'price',
+          required: true,
+          label: 'តម្លៃ',
+          align: 'left',
+          field: 'price',
+          sortable: true
+        },
+        {
+          name: 'sku',
+          required: true,
+          label: 'SKU',
+          align: 'left',
+          field: 'sku',
+          sortable: true
+        },
+        {
+          name: 'barcode',
+          required: true,
+          label: 'Barcode',
+          align: 'left',
+          field: 'barcode',
+          sortable: true
+        },
+      ],
+    });
+
     const dialog = reactive({
-      variant_create: false,
-      variant_option_create: false
+      add_variant_image: false
     })
-    const variant_id = ref('');
+
+    const sub_category_condition = reactive({
+      filter: {
+        category_id: {
+          $eq: null
+        }
+      }
+    });
+
+    function setImagePosition(val: any){
+      img_id.value = val;
+      dialog.add_variant_image = true;
+    }
+
     const query = reactive({
       categories: category_graphql,
       sub_categories: filter_sub_categories_graphql,
       brands: brand_graphql,
     });
 
-    function showVariantOption(vid: string) {
-      dialog.variant_option_create = true;
-      variant_id.value = vid;
+    function filterSelected(option: any, variant: any){
+      selected.value = [];
+      selected.value = selected_product.value.product_option.filter((f:any) => f[option] === variant)
     }
 
-    const {updateData} = updateProduct(props, context);
-    const {updateVariantData} = updateVariant(props, context);
-    const {updateVariantOptionData} = updateVariantOption(props, context);
-
+    const filter_sub_category = computed(() => {
+      const copy = Object.assign({}, JSON.parse(JSON.stringify(sub_category_condition.filter)));
+      if (copy.category_id.$eq == null) {
+        delete copy.category_id
+      } else {
+        // @ts-ignore
+        copy.category_id.$eq = copy.category_id.$eq?._id
+      }
+      return copy;
+    })
+    watch(() => filter_sub_category.value, (val) => {
+      sub_cate.value.filterSelect(val)
+    });
     return {
       dialog,
-      isImgPicker,
-      updateData,
-      updateVariantData,
-      updateVariantOptionData,
+      default_image,
       query,
+      sub_category_condition,
+      sub_cate,
+      filter_sub_category,
       selected_product,
-      variant_id,
-      showVariantOption,
-      tab: 'product-view'
-    };
+      selected,
+      check_all,
+      columns,
+      img_id,
+      setImagePosition,
+      filterSelected
+    }
   }
+
 }
 </script>
 
-<style scoped>
+<style lang="sass" scoped>
 
 </style>

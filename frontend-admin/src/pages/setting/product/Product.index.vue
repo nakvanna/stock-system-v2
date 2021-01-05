@@ -12,7 +12,7 @@
           color="blue-5"
           flat round size="12px"
           icon="preview"
-          to="/product-view"/>
+          to="/settings/products/view"/>
         <q-btn
           :disable="grid_data.selected.length!==1"
           color="blue-5"
