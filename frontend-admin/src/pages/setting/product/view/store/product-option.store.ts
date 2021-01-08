@@ -39,7 +39,7 @@ export function updateProductOption(prop: any, context: any) {
   })
 
   //--function--//
-  const updateData = async (id: string, key: string, value: any) => {
+  const updateProductOptionData = async (id: string, key: string, value: any) => {
     update_data.value._id = id;
     //@ts-ignore
     update_data.value[key] = value;
@@ -62,47 +62,52 @@ export function updateProductOption(prop: any, context: any) {
   //--end vue apollo--//
 
   return {
-    updateData,
+    updateProductOptionData,
     update_data,
     mapped
   }
 }
 
-/*DELETE*/
-/*export function deleteProduct(prop: any, context: any, table: any) {
+/*UPDATE Status*/
+export function removeProductOption(prop: any, context: any) {
   //--variables--//
-  const id = ref("");
+  const update_data = ref<ProductOptionModel>({});
   //--end variables--//
 
+  //computed
+  const mapped = computed(() => {
+    const copy = Object.assign({}, update_data.value);
+    delete copy._id
+    return copy
+  })
+
   //--function--//
-  const removeData = (_id: string) => {
-    id.value = _id;
-    context.root.$q.dialog({
-      title: 'ផ្ទៀងផ្ទាត់',
-      message: 'ពិតជាចង់ដំណើរការ?',
-      cancel: true,
-      persistent: true
-    }).onOk(async () => {
-      await remove().then((data: any) => {
-        onSuccess(data?.data.removeProduct, context);
-      })
+  const updateProductOptionData = async (id: string, key: string, value: any) => {
+    update_data.value._id = id;
+    //@ts-ignore
+    update_data.value[key] = value;
+    await update().then((data: any) => {
+      onSuccess(data?.data.updateProductOption, context);
     })
   }
   //--end function--//
 
-  //--remove vue apollo--//
-  const {mutate: remove, onDone} = useMutation(remove_product_graphql, () => ({
-    variables: {id: id.value}
+  //--update vue apollo--//
+  const {mutate: update, onDone} = useMutation(update_product_option_graphql, () => ({
+    variables: {id: update_data.value!._id, update_input: mapped.value},
   }));
 
   onDone((data: any) => {
-    if (data.data.removeProduct.success) {
-      table.value.refetch();
+    if (data.data.updateProductOption.success) {
+      update_data.value = {} as ProductOptionModel
     }
   })
-  //--end remove vue apollo--//
+  //--end vue apollo--//
 
   return {
-    removeData
+    updateProductOptionData,
+    update_data,
+    mapped
   }
-}*/
+}
+

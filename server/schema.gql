@@ -137,6 +137,7 @@ type ProductOptionType {
   option2: String
   option3: String
   status: Boolean
+  product: ProductType!
 }
 
 type ProductOptionTypeEdge {
@@ -200,6 +201,103 @@ type ProductCursorPagination {
   pageInfo: ProductTypePageInfo
 }
 
+type PurchaseType {
+  createdAt: DateTime
+  updatedAt: DateTime
+  success: Boolean
+  message: String
+  _id: ID
+  supplier_id: String
+  purchase_date: String
+  purchase_status: String
+  amount: Float
+  paid_amount: Float
+  due_amount: Float
+  description: String
+  status: Boolean
+}
+
+type PurchaseTypeEdge {
+  cursor: String
+  node: PurchaseType
+}
+
+type PurchaseTypePageInfo {
+  hasNextPage: Boolean
+  endCursor: String
+}
+
+type PurchaseCursorPagination {
+  edges: [PurchaseTypeEdge!]
+  nodes: [PurchaseType!]
+  totalCount: Int
+  pageInfo: PurchaseTypePageInfo
+}
+
+type InventoryType {
+  createdAt: DateTime
+  updatedAt: DateTime
+  success: Boolean
+  message: String
+  _id: ID
+  purchase_id: String
+  product_option_id: String
+  purchase_status: String
+  stock_qty: Float
+  purchase_qty: Float
+  buy_price: Float
+  status: Boolean
+}
+
+type InventoryTypeEdge {
+  cursor: String
+  node: InventoryType
+}
+
+type InventoryTypePageInfo {
+  hasNextPage: Boolean
+  endCursor: String
+}
+
+type InventoryCursorPagination {
+  edges: [InventoryTypeEdge!]
+  nodes: [InventoryType!]
+  totalCount: Int
+  pageInfo: InventoryTypePageInfo
+}
+
+type SupplierType {
+  createdAt: DateTime
+  updatedAt: DateTime
+  success: Boolean
+  message: String
+  _id: ID
+  name: String
+  company: String
+  phone: String
+  email: String
+  address: String
+  note: String
+  status: Boolean
+}
+
+type SupplierTypeEdge {
+  cursor: String
+  node: SupplierType
+}
+
+type SupplierTypePageInfo {
+  hasNextPage: Boolean
+  endCursor: String
+}
+
+type SupplierCursorPagination {
+  edges: [SupplierTypeEdge!]
+  nodes: [SupplierType!]
+  totalCount: Int
+  pageInfo: SupplierTypePageInfo
+}
+
 type Query {
   brands(options: InputCursorPaginationOption!): BrandCursorPagination!
   brand(id: ID!): BrandType!
@@ -213,6 +311,12 @@ type Query {
   product_media(id: ID!): ProductMediaType!
   product_options(options: InputCursorPaginationOption!): ProductOptionCursorPagination!
   product_option(id: ID!): ProductOptionType!
+  purchases(options: InputCursorPaginationOption!): PurchaseCursorPagination!
+  purchase(id: ID!): PurchaseType!
+  inventories(options: InputCursorPaginationOption!): InventoryCursorPagination!
+  inventory(id: ID!): InventoryType!
+  suppliers(options: InputCursorPaginationOption!): SupplierCursorPagination!
+  supplier(id: ID!): SupplierType!
 }
 
 input InputCursorPaginationOption {
@@ -246,6 +350,15 @@ type Mutation {
   createProductOption(create_input: CreateProductOptionInput!): ProductOptionType!
   updateProductOption(update_input: UpdateProductOptionInput!, id: String!): ProductOptionType!
   removeProductOption(id: String!): ProductOptionType!
+  createPurchase(create_input: CreatePurchaseInput!): PurchaseType!
+  updatePurchase(update_input: UpdatePurchaseInput!, id: String!): PurchaseType!
+  removePurchase(id: String!): PurchaseType!
+  createInventory(create_input: CreateInventoryInput!): InventoryType!
+  updateInventory(update_input: UpdateInventoryInput!, id: String!): InventoryType!
+  removeInventory(id: String!): InventoryType!
+  createSupplier(create_input: CreateSupplierInput!): SupplierType!
+  updateSupplier(update_input: UpdateSupplierInput!, id: String!): SupplierType!
+  removeSupplier(id: String!): SupplierType!
 }
 
 input CreateBrandInput {
@@ -347,5 +460,64 @@ input UpdateProductOptionInput {
   option1: String
   option2: String
   option3: String
+  status: Boolean
+}
+
+input CreatePurchaseInput {
+  supplier_id: String
+  purchase_date: DateTime
+  purchase_status: String
+  amount: Float
+  paid_amount: Float
+  due_amount: Float
+  description: String
+}
+
+input UpdatePurchaseInput {
+  supplier_id: String
+  purchase_date: DateTime
+  purchase_status: String
+  amount: Float
+  paid_amount: Float
+  due_amount: Float
+  description: String
+  status: Boolean
+}
+
+input CreateInventoryInput {
+  purchase_id: String
+  product_option_id: String
+  purchase_status: String
+  stock_qty: Float
+  purchase_qty: Float
+  buy_price: Float
+}
+
+input UpdateInventoryInput {
+  purchase_id: String
+  product_option_id: String
+  purchase_status: String
+  stock_qty: Float
+  purchase_qty: Float
+  buy_price: Float
+  status: Boolean
+}
+
+input CreateSupplierInput {
+  name: String
+  company: String
+  phone: String
+  email: String
+  address: String
+  note: String
+}
+
+input UpdateSupplierInput {
+  name: String
+  company: String
+  phone: String
+  email: String
+  address: String
+  note: String
   status: Boolean
 }

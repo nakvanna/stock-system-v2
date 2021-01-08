@@ -1,18 +1,23 @@
 import {gql} from '@apollo/client/core';
 
-export const brand_graphql = gql`
-    query brands(
+export const purchase_graphql = gql`
+    query purchases(
       $first: Float!
       $after: String!
       $condition: JSON!
     ){
-      brands(options: {first: $first, after: $after, condition: $condition}){
+      purchases(options: {first: $first, after: $after, condition: $condition}){
         totalCount
         edges {
           cursor
           node {
             _id
-            name
+            purchase_status
+            purchase_date
+            description
+            amount
+            paid_amount
+            due_amount
             createdAt
           }
         }

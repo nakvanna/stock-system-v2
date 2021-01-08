@@ -7,7 +7,7 @@ export const ProductOptionSchema = new mongoose.Schema(
     weight: { type: Number },
     weight_unit: { type: String, required: true },
     price: { type: Number, required: true },
-    barcode: { type: String },
+    barcode: { type: String, unique: true },
     image_position: { type: Number, default: 0 },
     option1: { type: String },
     option2: { type: String },
@@ -17,4 +17,4 @@ export const ProductOptionSchema = new mongoose.Schema(
   { timestamps: true },
 );
 // Create index to check duplicate one or multi field.
-// ProductOptionSchema.index({ sku: 1, name: 1 }, { unique: true });
+ProductOptionSchema.index({ product_id: 1, image_position: 1 }, { unique: true });

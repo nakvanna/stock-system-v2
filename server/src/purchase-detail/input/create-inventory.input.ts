@@ -1,21 +1,17 @@
 import {Field, InputType} from '@nestjs/graphql';
 
 @InputType()
-export class UpdatePurchaseInput {
+export class CreateInventoryInput {
     @Field({nullable: true})
-    supplier_id: string;
+    purchase_id: string;
     @Field({nullable: true})
-    purchase_date: Date;
+    product_option_id: string;
     @Field({nullable: true})
     purchase_status: string;
     @Field({nullable: true})
-    amount: number;
+    stock_qty: number;
     @Field({nullable: true})
-    paid_amount: number;
+    purchase_qty: number;
     @Field({nullable: true})
-    due_amount: number;
-    @Field({nullable: true})
-    description: string;
-    @Field({nullable: true})
-    status: boolean;
+    buy_price: number;
 }

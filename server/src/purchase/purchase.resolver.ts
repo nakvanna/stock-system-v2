@@ -12,15 +12,16 @@ export class PurchaseResolver {
 
     @Mutation(() => PurchaseType)
     createPurchase(@Args('create_input') create_input: CreatePurchaseInput) {
+        console.log(create_input)
         return this.service.create(create_input);
     }
 
-    @Query(() => PurchaseCursorPagination, {name: 'brands'})
+    @Query(() => PurchaseCursorPagination, {name: 'purchases'})
     findAll(@Args('options') options: InputCursorPaginationOption) {
         return this.service.findAll(options);
     }
 
-    @Query(() => PurchaseType, {name: 'brand'})
+    @Query(() => PurchaseType, {name: 'purchase'})
     findOne(@Args('id', {type: () => ID}) id: string) {
         return this.service.findOne(id);
     }

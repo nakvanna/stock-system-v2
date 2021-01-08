@@ -13,12 +13,6 @@
           flat round size="12px"
           icon="preview"
           to="/settings/products/view"/>
-        <q-btn
-          :disable="grid_data.selected.length!==1"
-          color="blue-5"
-          flat round size="12px"
-          icon="fas fa-list"
-          to="/list-create"/>
         <q-btn flat round size="12px" icon="add" to="/settings/products/new"/>
         <div class="q-pt-sm text-subtitle2 text-secondary">
           ទិន្នន័យសរុប {{ grid_data.record_value.total_record - 1 }} ទិន្នន័យបានទាញយក

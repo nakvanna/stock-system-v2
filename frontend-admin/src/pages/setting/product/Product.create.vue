@@ -1,8 +1,7 @@
 <template>
   <q-page>
-    {{mapped}}
     <q-form
-      @submit="createData"
+      @submit="createProductData"
     >
     <div class="row q-pa-md q-gutter-lg">
       <span class="text-h6 text-bold">បន្ថែមទំនិញថ្មី</span>
@@ -389,7 +388,7 @@ export default {
       pre_product_option.value.splice(index, 1);
     }
 
-    const {create_data, createData, mapped, pre_product_option} = createProduct(props, context);
+    const {create_data, createProductData, mapped, pre_product_option} = createProduct(props, context);
 
     watch(create_data.value, (val: any)=> {
       pre_product_option.value = [];
@@ -467,7 +466,7 @@ export default {
       is_variant,
       plus, minus,
       mapped,
-      createData,
+      createProductData,
       removeSku,
       variants,
       pre_product_option

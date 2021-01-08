@@ -7,6 +7,8 @@ const routes: RouteConfig[] = [
     children: [
       {path: '', component: () => import('pages/Index.vue')},
       {path: '/brands', component: () => import('pages/brand/Brand.index.vue')},
+      {path: '/purchases', meta: 'purchases', component: () => import('pages/purchase/Purchase.index.vue')},
+      {path: '/purchase/new', meta: 'purchases', component: () => import('pages/purchase/Purchase.create.vue')},
       {
         path: '/settings', component: () => import('pages/setting/Setting.index.vue'),
         children: [

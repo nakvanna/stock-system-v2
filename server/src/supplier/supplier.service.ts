@@ -6,18 +6,18 @@ import {
   applyPagination,
   InputCursorPaginationOption,
 } from '../../shared/cursor-pagination';
-import { ProductModel } from './models/product.model';
-import { CreateProductInput } from './input/create-product.input';
-import { ProductCursorPagination } from './dto/product.dto';
-import { UpdateProductInput } from './input/update-product.input';
+import { SupplierModel } from './models/supplier.model';
+import { CreateSupplierInput } from './input/create-supplier.input';
+import { SupplierCursorPagination } from './dto/supplier.dto';
+import { UpdateSupplierInput } from './input/update-supplier.input';
 
 @Injectable()
-export class ProductService {
-  constructor(@InjectModel('Product') private model: Model<ProductModel>) {}
+export class SupplierService {
+  constructor(@InjectModel('Supplier') private model: Model<SupplierModel>) {}
 
   async create(
-    create_input: CreateProductInput,
-  ): Promise<ProductModel | ErrorHandlingMessage> {
+    create_input: CreateSupplierInput,
+  ): Promise<SupplierModel | ErrorHandlingMessage> {
     try {
       const model = new this.model(create_input);
       const data = await model.save();
@@ -34,11 +34,11 @@ export class ProductService {
 
   async findAll(
     options: InputCursorPaginationOption,
-  ): Promise<ProductCursorPagination> {
+  ): Promise<SupplierCursorPagination> {
     return await applyPagination(this.model, options);
   }
 
-  async findOne(id: string): Promise<ProductModel | ErrorHandlingMessage> {
+  async findOne(id: string): Promise<SupplierModel | ErrorHandlingMessage> {
     try {
       const data = await this.model.findById(id);
       data.message = 'បានស្វែងរក';
@@ -54,8 +54,8 @@ export class ProductService {
 
   async update(
     id: string,
-    update_input: UpdateProductInput,
-  ): Promise<ProductModel | ErrorHandlingMessage> {
+    update_input: UpdateSupplierInput,
+  ): Promise<SupplierModel | ErrorHandlingMessage> {
     try {
       const data = await this.model.findByIdAndUpdate(
         id,
@@ -73,7 +73,7 @@ export class ProductService {
     }
   }
 
-  async remove(id: string): Promise<ProductModel | ErrorHandlingMessage> {
+  async remove(id: string): Promise<SupplierModel | ErrorHandlingMessage> {
     try {
       const data = await this.model.findById(id);
       await this.model.findByIdAndDelete(id);
@@ -88,7 +88,7 @@ export class ProductService {
     }
   }
 
-  async findByProductOption(_id: string): Promise<ProductModel> {
-    return this.model.findOne({ _id });
+  async findByParent(_id: string): Promise<SupplierModel> {
+    return this.model.findOne({_id})
   }
 }

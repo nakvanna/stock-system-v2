@@ -14,21 +14,35 @@
           <div class="row q-pa-md">
             <q-card style="min-width: 100%">
               <q-card-section>
-                <div class="row q-mt-md">
-                  <q-input
-                    outlined
-                    dense
-                    class="full-width"
+                <Strong>Title</Strong>
+                <div class="row q-mt-md q-mb-lg">
+                  {{selected_product.title}}
+                  <q-popup-edit
+                    @save="updateProductData(selected_product._id, 'title', selected_product.title)"
                     v-model="selected_product.title"
-                    label="ចំណងជើង"
-                    hint="បំពេញឈ្មោះ"
-                    :rules="[ val => !!val || 'សូមបំពេញចន្លោះ']"
-                  />
+                  >
+                    <q-input
+                      outlined
+                      dense
+                      autofocus
+                      class="full-width"
+                      v-model="selected_product.title"
+                      label="ចំណងជើង"
+                    />
+                  </q-popup-edit>
                 </div>
+                <strong>ពណ៌នា</strong>
                 <div class="row q-mt-md">
-                  <strong>ពណ៌នា</strong>
-                  <q-editor
-                    class="full-width" :toolbar="[
+                  <div v-html="selected_product.description"/>
+                  <q-popup-edit
+                    @save="updateProductData(selected_product._id, 'description', selected_product.description)"
+                    v-model="selected_product.description" buttons
+                    label-set="save"
+                  >
+                    <q-editor
+                      v-model="selected_product.description"
+                      counter @keyup.stop
+                      class="full-width" :toolbar="[
                   [
                     {
                       label: $q.lang.editor.align,
@@ -42,8 +56,9 @@
                   ['undo', 'redo'],
                   ['viewsource']
                 ]"
-                    toolbar-outline v-model="selected_product.description"
-                    min-height="5rem"/>
+                      toolbar-outline
+                      min-height="5rem"/>
+                  </q-popup-edit>
                 </div>
               </q-card-section>
             </q-card>
@@ -91,10 +106,27 @@
                   />
                 </div>
                   <q-space/>
-                  <div v-if="selected.length !== 0">
-                    <q-btn @click="setImagePosition(selected.map(m => m._id))" flat color="primary" label="Add Image"/>
-                    <q-btn flat color="primary" label="Remove Image"/>
-                  </div>
+                <q-btn-dropdown v-if="selected.length !== 0" dense color="primary" outline label="More options">
+                  <q-list>
+                    <q-item clickable v-close-popup  @click="setImagePosition(selected.map(m => m._id))">
+                      <q-item-section>
+                        <q-item-label>Add Image</q-item-label>
+                      </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup @click="onItemClick">
+                      <q-item-section>
+                        <q-item-label>Remove Image</q-item-label>
+                      </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup @click="onItemClick">
+                      <q-item-section>
+                        <q-item-label>Delete Record</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-btn-dropdown>
               </template>
               <template v-slot:body="props">
                 <q-tr :props="props">
@@ -127,12 +159,21 @@
                   </q-td>
                   <q-td key="price" :props="props">
                     ${{props.row.price.toFixed(2)}}
+                    <q-popup-edit @save="updateProductOptionData(props.row._id, 'price', props.row.price)" v-model.number="props.row.price">
+                      <q-input type="number" v-model.number="props.row.price" dense autofocus />
+                    </q-popup-edit>
                   </q-td>
                   <q-td key="sku" :props="props">
                     {{props.row.sku}}
+                    <q-popup-edit @save="updateProductOptionData(props.row._id, 'sku', props.row.sku)" v-model="props.row.sku">
+                      <q-input v-model="props.row.sku" dense autofocus />
+                    </q-popup-edit>
                   </q-td>
                   <q-td key="barcode" :props="props">
                     {{props.row.barcode}}
+                    <q-popup-edit @save="updateProductOptionData(props.row._id, 'barcode', props.row.barcode)" v-model="props.row.barcode">
+                      <q-input v-model="props.row.barcode" dense autofocus />
+                    </q-popup-edit>
                   </q-td>
                 </q-tr>
               </template>
@@ -170,10 +211,27 @@
                   />
                 </div>
                   <q-space/>
-                  <div v-if="selected.length !== 0">
-                    <q-btn @click="setImagePosition(selected.map(m => m._id))" flat color="primary" label="Add Image"/>
-                    <q-btn flat color="primary" label="Remove Image"/>
-                  </div>
+                <q-btn-dropdown v-if="selected.length !== 0" dense color="primary" outline label="More options">
+                  <q-list>
+                    <q-item clickable v-close-popup  @click="setImagePosition(selected.map(m => m._id))">
+                      <q-item-section>
+                        <q-item-label>Add Image</q-item-label>
+                      </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup @click="onItemClick">
+                      <q-item-section>
+                        <q-item-label>Remove Image</q-item-label>
+                      </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup @click="onItemClick">
+                      <q-item-section>
+                        <q-item-label>Delete Record</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-btn-dropdown>
               </template>
               <template v-slot:body="props">
                 <q-tr :props="props">
@@ -206,15 +264,23 @@
                   </q-td>
                   <q-td key="option3" :props="props">
                     {{props.row.option3}}
-                  </q-td>
-                  <q-td key="price" :props="props">
-                    ${{props.row.price.toFixed(2)}}
-                  </q-td>
+                  </q-td><q-td key="price" :props="props">
+                  ${{props.row.price.toFixed(2)}}
+                  <q-popup-edit @save="updateProductOptionData(props.row._id, 'price', props.row.price)" v-model.number="props.row.price">
+                    <q-input type="number" v-model.number="props.row.price" dense autofocus />
+                  </q-popup-edit>
+                </q-td>
                   <q-td key="sku" :props="props">
                     {{props.row.sku}}
+                    <q-popup-edit @save="updateProductOptionData(props.row._id, 'sku', props.row.sku)" v-model="props.row.sku">
+                      <q-input v-model="props.row.sku" dense autofocus />
+                    </q-popup-edit>
                   </q-td>
                   <q-td key="barcode" :props="props">
                     {{props.row.barcode}}
+                    <q-popup-edit @save="updateProductOptionData(props.row._id, 'barcode', props.row.barcode)" v-model="props.row.barcode">
+                      <q-input v-model="props.row.barcode" dense autofocus />
+                    </q-popup-edit>
                   </q-td>
                 </q-tr>
               </template>
@@ -225,40 +291,70 @@
           <div class="row q-pa-md">
             <q-card style="min-width: 100%">
               <q-card-section>
-                <strong>Other</strong>
-                <div class="row q-mt-md">
-                  <q-select
-                    outlined dense
-                    class="full-width"
+                <strong>Status</strong>
+                <div class="row q-mt-md q-mb-lg">
+                  {{selected_product.product_status}}
+                  <q-popup-edit
+                    @save="updateProductData(selected_product._id, 'product_status', selected_product.product_status)"
                     v-model="selected_product.product_status"
-                    :options="['Draft', 'Active']"
-                    label="Status"
-                  />
+                  >
+                    <q-select
+                      outlined dense
+                      class="full-width"
+                      v-model="selected_product.product_status"
+                      :options="['Draft', 'Active']"
+                      label="Status"
+                    />
+                  </q-popup-edit>
                 </div>
-                <div class="row q-mt-md">
-                  <tag-input
-                    :validate="false"
-                    class="full-width"
-                    dense outlined
-                    label="Tags"
+                <strong>Tags</strong>
+                <div class="row q-mt-md q-mb-lg">
+                  {{selected_product.tags}}
+                  <q-popup-edit
+                    buttons
+                    @save="updateProductData(selected_product._id, 'tags', selected_product.tags)"
                     v-model="selected_product.tags"
-                  />
+                  >
+                    <tag-input
+                      :validate="false"
+                      class="full-width"
+                      dense outlined
+                      label="Tags"
+                      v-model="selected_product.tags"
+                    />
+                  </q-popup-edit>
                 </div>
-                <div class="row q-mt-md">
-                  <q-input
-                    class="full-width"
-                    dense outlined
-                    v-model.number="selected_product.product_option[0].price"
-                    label="Price"
-                  />
-                </div>
-                <div class="row q-mt-md">
-                  <q-input
-                    class="full-width"
-                    dense outlined
-                    v-model="selected_product.product_option[0].sku"
-                    label="SKU (Stock Keeping Unit)"
-                  />
+                <div v-if="selected_product.variant1 === null && selected_product.variant2 === null && selected_product.variant3 === null">
+                  <strong>Price</strong>
+                  <div class="row q-mt-md q-mb-lg">
+                    ${{selected_product.product_option[0].price.toFixed(2)}}
+                    <q-popup-edit
+                      @save="updateProductOptionData(selected_product.product_option[0]._id, 'price', selected_product.product_option[0].price)"
+                      v-model="selected_product.product_option[0].price"
+                    >
+                      <q-input
+                        class="full-width"
+                        dense outlined
+                        v-model.number="selected_product.product_option[0].price"
+                        label="Price"
+                      />
+                    </q-popup-edit>
+                  </div>
+                  <strong>SKU</strong>
+                  <div class="row q-mt-md">
+                    {{selected_product.product_option[0].sku}}
+                    <q-popup-edit
+                      @save="updateProductOptionData(selected_product.product_option[0]._id, 'sku', selected_product.product_option[0].sku)"
+                      v-model="selected_product.product_option[0].sku"
+                    >
+                      <q-input
+                        class="full-width"
+                        dense outlined
+                        v-model="selected_product.product_option[0].sku"
+                        label="SKU (Stock Keeping Unit)"
+                      />
+                    </q-popup-edit>
+                  </div>
                 </div>
               </q-card-section>
             </q-card>
@@ -266,26 +362,27 @@
         </div>
       </div>
     </q-form>
-    <add-variant-image :dialog.sync="dialog.add_variant_image" :variant_ids.sync="img_id" v-model="selected_product.product_media"/>
+    <add-variant-image :dialog.sync="dialog.add_variant_image" :variant_ids.sync="variant_ids" v-model="selected_product.product_media"/>
   </q-page>
 </template>
 
 <script lang="ts">
 import SearchSelect from "components/SearchSelect.vue";
-import { selected_product } from './store/product.store'
+import {selected_product, updateProduct} from './store/product.store'
 import {computed, reactive, ref, watch} from "@vue/composition-api";
 import {category_graphql} from "pages/setting/sub-setting/category/graphql/category.graphql";
 import {filter_sub_categories_graphql} from "pages/setting/sub-setting/sub-category/graphql/sub-category.graphql";
 import {brand_graphql} from "pages/setting/sub-setting/brand/graphql/brand.graphql";
 import TagInput from "components/TagInput.vue";
 import AddVariantImage from "pages/setting/product/AddVariantImage.vue";
+import {updateProductOption} from "pages/setting/product/view/store/product-option.store";
 
 export default {
   name: "ProductView",
   components: {AddVariantImage, TagInput, SearchSelect, selected_product},
-  setup(){
+  setup(props: any, context: any){
     const default_image = "https://redzonekickboxing.com/wp-content/uploads/2017/04/default-image-620x600.jpg";
-    const img_id = ref();
+    const variant_ids = ref();
     const sub_cate = ref();
     const check_all = ref(false)
     const selected = ref([]);
@@ -414,7 +511,8 @@ export default {
     });
 
     function setImagePosition(val: any){
-      img_id.value = val;
+      console.log(val)
+      variant_ids.value = val;
       dialog.add_variant_image = true;
     }
 
@@ -429,6 +527,10 @@ export default {
       selected.value = selected_product.value.product_option.filter((f:any) => f[option] === variant)
     }
 
+    const onItemClick = (()=> {
+      alert('Hello')
+    })
+
     const filter_sub_category = computed(() => {
       const copy = Object.assign({}, JSON.parse(JSON.stringify(sub_category_condition.filter)));
       if (copy.category_id.$eq == null) {
@@ -442,6 +544,9 @@ export default {
     watch(() => filter_sub_category.value, (val) => {
       sub_cate.value.filterSelect(val)
     });
+
+    const {updateProductOptionData} = updateProductOption(props, context)
+    const {updateProductData} = updateProduct(props, context)
     return {
       dialog,
       default_image,
@@ -453,9 +558,12 @@ export default {
       selected,
       check_all,
       columns,
-      img_id,
+      variant_ids,
       setImagePosition,
-      filterSelected
+      filterSelected,
+      onItemClick,
+      updateProductOptionData,
+      updateProductData
     }
   }
 

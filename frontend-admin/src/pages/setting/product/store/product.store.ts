@@ -76,7 +76,7 @@ export function createProduct(prop: any, context: any) {
   //--end-computed--//
 
   //--function--//
-  const createData = async () => {
+  const createProductData = async () => {
     await create().then((data: any) => {
       onSuccess(data?.data.createProduct, context);
     })
@@ -109,7 +109,7 @@ export function createProduct(prop: any, context: any) {
   return {
     create_data,
     pre_product_option,
-    createData,
+    createProductData,
     mapped
   }
 }
@@ -207,19 +207,12 @@ export function updateProduct(prop: any, context: any) {
   })
 
   //--function--//
-  const updateData = async (id: string, key: string, value: any) => {
+  const updateProductData = async (id: string, key: string, value: any) => {
     update_data.value._id = id;
     //@ts-ignore
     update_data.value[key] = value;
-    context.root.$q.dialog({
-      title: 'ផ្ទៀងផ្ទាត់',
-      message: 'ពិតជាចង់ដំណើរការ?',
-      cancel: true,
-      persistent: true
-    }).onOk(async () => {
-      await update().then((data: any) => {
-        onSuccess(data?.data.updateProduct, context);
-      })
+    await update().then((data: any) => {
+      onSuccess(data?.data.updateProduct, context);
     })
   }
   //--end function--//
@@ -237,7 +230,7 @@ export function updateProduct(prop: any, context: any) {
   //--end vue apollo--//
 
   return {
-    updateData
+    updateProductData
   }
 }
 

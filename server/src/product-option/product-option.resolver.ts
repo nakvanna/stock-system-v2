@@ -1,17 +1,23 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {Args, ID, Mutation, Query, ResolveField, Resolver, Parent} from '@nestjs/graphql';
 import { InputCursorPaginationOption } from 'shared/cursor-pagination';
 import {ProductOptionType, ProductOptionCursorPagination} from "./dto/product-option.dto";
 import { ProductOptionService } from './product-option.service';
 import { CreateProductOptionInput } from './input/create-product-option.input';
 import { UpdateProductOptionInput } from './input/update-product-option.input';
+import { ProductService } from 'src/product/product.service';
+import {ProductType} from "../product/dto/product.dto";
+import {ProductModel} from "../product/models/product.model";
+import {ProductOptionModel} from "./models/product-option.model";
 
 @Resolver(() => ProductOptionType)
 export class ProductOptionResolver {
-  constructor(private readonly service: ProductOptionService) {}
+  constructor(
+      private readonly service: ProductOptionService,
+      private readonly productService: ProductService,
+  ) {}
 
   @Mutation(() => ProductOptionType)
   createProductOption(@Args('create_input') create_input: CreateProductOptionInput) {
-    console.log(create_input);
     return this.service.create(create_input);
   }
 
@@ -37,4 +43,10 @@ export class ProductOptionResolver {
   removeProductOption(@Args('id') id: string) {
     return this.service.remove(id);
   }
+
+  @ResolveField(() => ProductType)
+  product(@Parent() product_option: ProductOptionModel){
+    return this.productService.findByProductOption(product_option.product_id);
+  }
+
 }

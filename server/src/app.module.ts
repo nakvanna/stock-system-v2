@@ -7,6 +7,9 @@ import { SubCategoryModule } from './sub-category/sub-category.module';
 import { ProductModule } from './product/product.module';
 import { ProductOptionModule } from './product-option/product-option.module';
 import { ProductMediaModule } from './product-media/product-media.module';
+import {PurchaseModule} from "./purchase/purchase.module";
+import {InventoryModule} from "./purchase-detail/inventory.module";
+import {SupplierModule} from "./supplier/supplier.module";
 
 @Module({
   imports: [
@@ -14,12 +17,15 @@ import { ProductMediaModule } from './product-media/product-media.module';
     MongooseModule.forRoot(
       'mongodb+srv://nakvanna:HswQ5wxCARUyZs5I@cluster0.fokwn.mongodb.net/learning-db?retryWrites=true&w=majority',
     ),
-    CategoryModule,
-    SubCategoryModule,
-    ProductModule,
-    BrandModule,
-    ProductOptionModule,
-    ProductMediaModule,
+      CategoryModule,
+      SubCategoryModule,
+      ProductModule,
+      BrandModule,
+      ProductOptionModule,
+      ProductMediaModule,
+      PurchaseModule,
+      InventoryModule,
+      SupplierModule
   ],
 })
 export class AppModule {}

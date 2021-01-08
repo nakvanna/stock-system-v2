@@ -102,6 +102,11 @@ export default defineComponent({
         label: 'មូដទំនិញ',
         mini_label: 'មូដទំនិញ'
       },{
+        to: '/purchases',
+        icon: 'fas fa-home',
+        label: 'ទិញទំនិញ',
+        mini_label: 'ទិញទំនិញ'
+      },{
         to: '/settings',
         icon: 'fas fa-cog',
         label: 'ការកំណត់',

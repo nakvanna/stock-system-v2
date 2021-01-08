@@ -70,18 +70,18 @@ export default {
 
     const updateImagePosition = (()=>{
       for (const i in variant_id.value) {
-        updateData(variant_id.value[i], 'image_position', is_selected.value[0])
+        updateProductOptionData(variant_id.value[i], 'image_position', is_selected.value[0])
       }
     })
 
-    const { update_data, updateData, mapped } = updateProductOption(props, context)
+    const { update_data, updateProductOptionData, mapped } = updateProductOption(props, context)
 
     return {
       dialog_data,
       is_selected,
       data,
       variant_id,
-      updateData,
+      updateProductOptionData,
       mapped,
       update_data,
       updateImagePosition
