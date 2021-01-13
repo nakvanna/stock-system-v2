@@ -1,5 +1,5 @@
 import {computed, reactive, ref} from "@vue/composition-api";
-import {product_page_graphql} from "../graphql/product-page.graphql";
+import {product_sale_view_graphql} from "../graphql/product-page.graphql";
 
 let product_selected = ref({});
 
@@ -118,7 +118,7 @@ export const readBrands = (table: any) => {
         align: "left"
       }
     ],
-    query: product_page_graphql
+    query: product_sale_view_graphql
   });
   //--end-variables--//
 

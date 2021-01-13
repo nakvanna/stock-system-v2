@@ -4,8 +4,8 @@
       <div class="row q-gutter-md">
         <q-card
           :key="index" v-for="(item, index) in result.products.edges"
-          class="my-card cursor-pointer" @click="productSelected(item)">
-          <q-img :src="item.node.thumbnail"/>
+          class="image-card cursor-pointer" @click="productSelected(item.cursor)">
+          <q-img :src="item.node.product_media.filter(f => f.position === 1)[0].src"/>
           <q-card-section>
             <q-btn
               @click.stop="addCart()"
@@ -17,7 +17,7 @@
             />
             <div class="row no-wrap q-pt-md items-center">
               <div class="col ellipsis">
-                {{ item.node.name }}
+                {{ item.node.title }}
               </div>
             </div>
             <q-rating
@@ -33,13 +33,13 @@
           </q-card-section>
           <q-card-section class="q-pt-none">
             <div class="text-subtitle1">
-              <span v-if="item.node.sku.length > 1">
-                ${{ Math.min.apply(Math, item.node.sku.map(m => m.price)).toFixed(2) }}
+              <span v-if="item.node.product_option.length > 1">
+                ${{ Math.min.apply(Math, item.node.product_option.map(m => m.price)).toFixed(2) }}
                 -
-                ${{ Math.max.apply(Math, item.node.sku.map(m => m.price)).toFixed(2) }}
+                ${{ Math.max.apply(Math, item.node.product_option.map(m => m.price)).toFixed(2) }}
               </span>
-              <span v-else-if="item.node.sku.length === 1">
-                ${{ item.node.sku[0].price.toFixed(2) }}
+              <span v-else-if="item.node.product_option.length === 1">
+                ${{ item.node.product_option[0].price.toFixed(2) }}
               </span>
               <span v-else class="text-negative">
                 Unavailable
@@ -52,14 +52,14 @@
         </q-card>
       </div>
     </div>
+    {{result.products.edges[0]}}
   </q-page>
 </template>
 
 <script lang="ts">
 import {useQuery} from "@vue/apollo-composable";
-import {product_page_graphql} from "pages/product-page/graphql/product-page.graphql";
+import {product_sale_view_graphql} from "pages/product-page/graphql/product-page.graphql";
 import {reactive, ref} from "@vue/composition-api";
-import {productPageState} from "pages/product-page/store/product-page.store";
 
 export default {
   setup(props: any, context: any) {
@@ -70,19 +70,17 @@ export default {
       condition: JSON.stringify({}),
     });
 
-    function productSelected(data: any) {
-      context.root.$router.push('/view/sale')
-      product_selected.value = data;
+    function productSelected(id: any) {
+      console.log(id)
+      context.root.$router.push('/view/sale/'+id)
     }
 
     function addCart() {
       alert('Add cart..!')
     }
 
-    const {product_selected} = productPageState();
-
     const {result} = useQuery(
-      product_page_graphql,
+      product_sale_view_graphql,
       () => variables,
     );
 
@@ -97,7 +95,7 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-.my-card
+.image-card
   width: 200px
 </style>
 

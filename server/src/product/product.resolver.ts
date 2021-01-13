@@ -37,10 +37,6 @@ export class ProductResolver {
     const product = await this.service.create(create_input);
     if (product.success){
       create_input.create_product_option_input.map(async (m: any)=> {
-        console.log({
-          ...m,//@ts-ignore
-          product_id: product._id
-        })
         await this.productOptionService.create({
           ...m,//@ts-ignore
           product_id: product._id

@@ -241,6 +241,14 @@
                   label="SKU (Stock Keeping Unit)"
                 />
               </div>
+              <div class="row q-mt-md">
+                <q-input
+                  class="full-width"
+                  dense outlined
+                  v-model="create_data.default_barcode"
+                  label="Barcode (No Variant)"
+                />
+              </div>
             </q-card-section>
           </q-card>
         </div>
@@ -297,6 +305,7 @@
              label="រក្សាទុក"/>
     </div>
     </q-form>
+    {{mapped}}
   </q-page>
 </template>
 
@@ -322,6 +331,7 @@ export default {
       v3: false,
     });
 
+    //Condition filter
     const sub_category_condition = reactive({
       filter: {
         category_id: {
@@ -330,12 +340,14 @@ export default {
       }
     });
 
+    //Search Select Query
     const query = reactive({
       categories: category_graphql,
       sub_categories: filter_sub_categories_graphql,
       brands: brand_graphql,
     });
 
+    //Filter Sub-category after Category selected
     const filter_sub_category = computed(() => {
       const copy = Object.assign({}, JSON.parse(JSON.stringify(sub_category_condition.filter)));
       if (copy.category_id.$eq == null) {
@@ -347,14 +359,17 @@ export default {
       return copy;
     })
 
+    //Passing condition
     watch(() => filter_sub_category.value, (val) => {
       sub_cate.value.filterSelect(val)
     });
 
+    //Check when Variant has
     watch(is_variant, () => {
       if (is_variant.value){
         variants.v1 = true;
-      }else {
+      }
+      else {
         variants.v1 = false;
         create_data.value.variant1 = {name: 'Size', values: []}
         variants.v2 = false;
@@ -364,6 +379,7 @@ export default {
       }
     })
 
+    //Plus variant
     function plus() {
       if (variants.v1 === true && variants.v2 === false){
         variants.v2 = true
@@ -372,6 +388,7 @@ export default {
       }
     }
 
+    //Minus variant
     function minus() {
       if (variants.v3 && variants.v2 && variants.v1){
         variants.v3 = false;
@@ -384,15 +401,17 @@ export default {
       }
     }
 
+    const {create_data, createProductData, pre_product_option, mapped} = createProduct(props, context);
+
+    //Remove SKU List
     function removeSku(index: number) {
       pre_product_option.value.splice(index, 1);
     }
 
-    const {create_data, createProductData, mapped, pre_product_option} = createProduct(props, context);
-
+    //When 1 variant 2 variants & 3 variants
     watch(create_data.value, (val: any)=> {
       pre_product_option.value = [];
-      if (variants.v1 && !variants.v2 && !variants.v3){
+      if (variants.v1 && !variants.v2 && !variants.v3) {
         if (val.variant1.values){
           for (let i = 0; i < val.variant1.values.length; i ++){
             pre_product_option.value.push({
@@ -408,9 +427,11 @@ export default {
             })
           }
         }
-      }else if (variants.v1 && variants.v2 && !variants.v3){
+      }
+      else if (variants.v1 && variants.v2 && !variants.v3){
         let i1 = 0;
-        if (val.variant1.values && val.variant2.values){
+        if (val.variant1.values && val.variant2.values)
+        {
           pre_product_option.value = [];
           for (let i = 0; i < val.variant1.values.length; i ++){
             for (let j = 0; j < val.variant2.values.length; j ++){
@@ -430,7 +451,8 @@ export default {
             }
           }
         }
-      }else if(variants.v1 && variants.v2 && variants.v3) {
+      }
+      else if(variants.v1 && variants.v2 && variants.v3) {
         let i1 = 0;
         if(val.variant1.values && val.variant2.values && val.variant3.values){
           for (let i = 0; i < val.variant1.values.length; i ++){
@@ -458,18 +480,16 @@ export default {
     })
 
     return {
-      query,
+      query, is_variant,
       sub_category_condition,
-      sub_cate,
+      sub_cate,variants,
       filter_sub_category,
       create_data,
-      is_variant,
+      pre_product_option,
       plus, minus,
-      mapped,
       createProductData,
       removeSku,
-      variants,
-      pre_product_option
+      mapped
     }
   },
 }

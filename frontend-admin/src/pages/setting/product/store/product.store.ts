@@ -51,6 +51,7 @@ export function createProduct(prop: any, context: any) {
     delete copy.pre_variants;
     delete copy.default_price;
     delete copy.default_sku;
+    delete copy.default_barcode;
     const copy_pre_product_option = JSON.parse(JSON.stringify(pre_product_option.value));
     return {
       ...copy,
@@ -62,11 +63,11 @@ export function createProduct(prop: any, context: any) {
       create_product_option_input: copy_pre_product_option.length === 0? [{
         product_id: '',
         sku: create_data.value.default_sku,
+        price: create_data.value.default_price,
+        barcode: create_data.value.default_barcode,
         weight :0,
         weight_unit:"kg",
         image_position: 0,
-        price: create_data.value.default_price,
-        barcode: ''
       }] : copy_pre_product_option.map((m: any) => {
         delete m.label;
         return {...m}

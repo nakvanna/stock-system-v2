@@ -7,7 +7,7 @@
     <q-card>
       <q-card-section class="q-pt-none">
         <q-form
-          @submit="create"
+          @submit="createData"
         >
           <div class="row">
             <q-input
@@ -31,10 +31,8 @@
 </template>
 
 <script lang="ts">
-import {computed, ref} from "@vue/composition-api";
-import {createGlobal} from "pages/global.store";
-import {create_category_graphql} from "pages/setting/sub-setting/category/graphql/create-category.graphql";
-import {CategoryModel} from "pages/setting/sub-setting/category/model/category.model";
+import {computed} from "@vue/composition-api";
+import {createCategory} from "pages/setting/sub-setting/category/store/category.store";
 
 export default {
   name: "Category.create",
@@ -45,7 +43,6 @@ export default {
     }
   },
   setup(props: any, context: any) {
-    const create_data = ref<CategoryModel>({});
     const isShow = computed({
       get: () => props.value,
       set: (value) => {
@@ -53,19 +50,12 @@ export default {
       },
     });
 
-    //Mapped to field
-    const mapped = computed(function () {
-      return {
-        ...create_data.value,
-      }
-    });
-
-    const {create} = createGlobal(context, mapped, create_category_graphql);
+    const {createData, create_data} = createCategory(props, context)
 
     return {
       isShow,
       create_data,
-      create,
+      createData,
     }
   }
 }

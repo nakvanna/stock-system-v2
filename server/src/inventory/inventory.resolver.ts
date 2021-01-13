@@ -1,18 +1,23 @@
-import {Args, ID, Mutation, Query, Resolver} from '@nestjs/graphql';
+import {Args, ID, Mutation, Query, ResolveField, Resolver, Parent} from '@nestjs/graphql';
 import {InputCursorPaginationOption} from 'shared/cursor-pagination';
 import { InventoryType, InventoryCursorPagination } from './dto/inventory.dto';
 import {InventoryService} from "./inventory.service";
 import {CreateInventoryInput} from "./input/create-inventory.input";
 import { UpdateInventoryInput } from './input/update-inventory.input';
+import {ProductOptionType} from "../product-option/dto/product-option.dto";
+import {InventoryModel} from "./models/inventory.model";
+import {ProductOptionService} from "../product-option/product-option.service";
 
 @Resolver(() => InventoryType)
 export class InventoryResolver {
-    constructor(private readonly service: InventoryService) {
+    constructor(
+        private readonly service: InventoryService,
+        private readonly productOptionService: ProductOptionService,
+        ) {
     }
 
     @Mutation(() => InventoryType)
     createInventory(@Args('create_input') create_input: CreateInventoryInput) {
-        console.log(create_input)
         return this.service.create(create_input);
     }
 
@@ -37,5 +42,10 @@ export class InventoryResolver {
     @Mutation(() => InventoryType)
     removeInventory(@Args('id') id: string) {
         return this.service.remove(id);
+    }
+
+    @ResolveField(() => ProductOptionType)
+    product_option(@Parent() inventory: InventoryModel){
+        return this.productOptionService.findByInventory(inventory.product_option_id)
     }
 }

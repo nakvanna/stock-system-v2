@@ -17,7 +17,6 @@ const routes: RouteConfig[] = [
             meta: 'settings',
             component: () => import('pages/setting/product/Product.index.vue')
           },
-          {path: '/settings/sku', meta: 'settings', component: () => import('pages/setting/sku/Sku.index.vue')},
         ]
       },
       {
@@ -57,7 +56,7 @@ const routes: RouteConfig[] = [
     component: () => import('layouts/MainLayoutView.vue'),
     children: [
       {path: '/', component: () => import('pages/product-page/ProductViewPage.vue')},
-      {path: '/view/sale', component: () => import('pages/product-page/ProductSalePage.vue')}
+      {path: '/view/sale/:id', component: () => import('pages/product-page/ProductSalePage.vue')}
     ]
   },
 

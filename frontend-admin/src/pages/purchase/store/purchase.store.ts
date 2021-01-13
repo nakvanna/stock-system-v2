@@ -1,10 +1,10 @@
-import {computed, reactive, ref, watch} from "@vue/composition-api";
+import {computed, ref, watch} from "@vue/composition-api";
 import {useMutation} from "@vue/apollo-composable";
 import {PurchaseModel} from "pages/purchase/model/purchase.model";
 import {remove_purchase_graphql} from "pages/purchase/graphql/remove-purchase.graphql";
-import { create_purchase_graphql } from "../graphql/create-purchase.graphql";
+import {create_purchase_graphql } from "../graphql/create-purchase.graphql";
 import {purchase_graphql} from "pages/purchase/graphql/purchase.graphql";
-import { update_purchase_graphql } from "../graphql/update-purchase.graphql";
+import {update_purchase_graphql } from "../graphql/update-purchase.graphql";
 
 //--OnDone message--//
 function onSuccess(_data: any, context: any) {
@@ -34,7 +34,9 @@ export function createPurchase(prop: any, context: any) {
     description: '',
     amount: 0,
     paid_amount: 0,
-    due_amount: 0
+    due_amount: 0,
+    create_inventory_input: [],
+    purchase_status: 'Pending'
   });
   //--end-variables--//
 
@@ -42,6 +44,18 @@ export function createPurchase(prop: any, context: any) {
   const mapped = computed(function () {
     return {
       ...create_data.value,
+      supplier_id: create_data.value.supplier_id?._id,
+      amount: create_data.value.amount,
+      create_inventory_input: create_data.value.create_inventory_input.map((m: any) => {
+        return {
+          purchase_id: '',
+          product_option_id: m._id,
+          purchase_status: create_data.value.purchase_status,
+          stock_qty: m.purchase_qty,
+          purchase_qty: m.purchase_qty,
+          buy_price: m.buy_price,
+        }
+      })
     }
   });
   //--end-computed--//
@@ -56,12 +70,18 @@ export function createPurchase(prop: any, context: any) {
 
   //--create vue apollo--//
   const {mutate: create, onDone} = useMutation(create_purchase_graphql, () => ({
-    variables: mapped.value,
+    variables: {create_input: mapped.value},
   }));
 
   onDone((data: any) => {
     if (data.data.createPurchase.success) {
-      create_data.value = {};
+      create_data.value = {
+        description: '',
+        amount: 0,
+        paid_amount: 0,
+        due_amount: 0,
+        create_inventory_input: []
+      };
       context.emit('on-success')
     }
   })
@@ -71,6 +91,7 @@ export function createPurchase(prop: any, context: any) {
   return {
     create_data,
     createPurchaseData,
+    mapped
   }
 }
 
@@ -112,8 +133,10 @@ export const readPurchase = (table: any) => {
       amount: `$${x.node.amount.toFixed(2)}`,
       paid_amount: `$${x.node.paid_amount.toFixed(2)}`,
       due_amount: `$${x.node.due_amount.toFixed(2)}`,
-      purchase_date: new Date(new Date(x.node.createdAt).toDateString()),
-      createdAt: new Date(new Date(x.node.createdAt).toDateString()),
+      purchase_date: x.node.purchase_date,
+      createdAt: x.node.createdAt,
+      // purchase_date: new Date(new Date(x.node.purchase_date).toDateString()),
+      // createdAt: new Date(new Date(x.node.createdAt).toDateString()),
     }
   };
 

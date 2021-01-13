@@ -17,6 +17,7 @@ export interface ProductModel {
   pre_variants?: [OptionModel] | any;
   default_sku?: string;
   default_price?: number;
+  default_barcode?: string;
 }
 
 export interface OptionModel {

@@ -114,13 +114,13 @@
                       </q-item-section>
                     </q-item>
 
-                    <q-item clickable v-close-popup @click="onItemClick">
+                    <q-item clickable v-close-popup>
                       <q-item-section>
                         <q-item-label>Remove Image</q-item-label>
                       </q-item-section>
                     </q-item>
 
-                    <q-item clickable v-close-popup @click="onItemClick">
+                    <q-item clickable v-close-popup>
                       <q-item-section>
                         <q-item-label>Delete Record</q-item-label>
                       </q-item-section>
@@ -287,6 +287,7 @@
             </q-table>
           </div>
         </div>
+
         <div class="col-4">
           <div class="row q-pa-md">
             <q-card style="min-width: 100%">
@@ -341,7 +342,7 @@
                     </q-popup-edit>
                   </div>
                   <strong>SKU</strong>
-                  <div class="row q-mt-md">
+                  <div class="row q-mt-md q-mb-lg">
                     {{selected_product.product_option[0].sku}}
                     <q-popup-edit
                       @save="updateProductOptionData(selected_product.product_option[0]._id, 'sku', selected_product.product_option[0].sku)"
@@ -352,6 +353,21 @@
                         dense outlined
                         v-model="selected_product.product_option[0].sku"
                         label="SKU (Stock Keeping Unit)"
+                      />
+                    </q-popup-edit>
+                  </div>
+                  <strong>Barcode</strong>
+                  <div class="row q-mt-md">
+                    {{selected_product.product_option[0].barcode}}
+                    <q-popup-edit
+                      @save="updateProductOptionData(selected_product.product_option[0]._id, 'barcode', selected_product.product_option[0].barcode)"
+                      v-model="selected_product.product_option[0].barcode"
+                    >
+                      <q-input
+                        class="full-width"
+                        dense outlined
+                        v-model="selected_product.product_option[0].barcode"
+                        label="Barcode"
                       />
                     </q-popup-edit>
                   </div>
@@ -384,10 +400,9 @@ export default {
     const default_image = "https://redzonekickboxing.com/wp-content/uploads/2017/04/default-image-620x600.jpg";
     const variant_ids = ref();
     const sub_cate = ref();
-    const check_all = ref(false)
+    const check_all = ref(false);
     const selected = ref([]);
     const columns = reactive({
-      column1: [],
       column2: [
         {
           name: 'image_position',
@@ -500,8 +515,9 @@ export default {
 
     const dialog = reactive({
       add_variant_image: false
-    })
+    });
 
+    //Condition filter
     const sub_category_condition = reactive({
       filter: {
         category_id: {
@@ -510,58 +526,53 @@ export default {
       }
     });
 
+    //Set on position
     function setImagePosition(val: any){
-      console.log(val)
       variant_ids.value = val;
       dialog.add_variant_image = true;
     }
 
+    //Search select Query
     const query = reactive({
       categories: category_graphql,
       sub_categories: filter_sub_categories_graphql,
       brands: brand_graphql,
     });
 
+    //Filter selected
     function filterSelected(option: any, variant: any){
       selected.value = [];
-      selected.value = selected_product.value.product_option.filter((f:any) => f[option] === variant)
+      selected.value = selected_product.value.product_option.filter((f:any) => f[option] === variant);
     }
-
-    const onItemClick = (()=> {
-      alert('Hello')
-    })
 
     const filter_sub_category = computed(() => {
       const copy = Object.assign({}, JSON.parse(JSON.stringify(sub_category_condition.filter)));
       if (copy.category_id.$eq == null) {
-        delete copy.category_id
-      } else {
-        // @ts-ignore
+        delete copy.category_id;
+      } else {// @ts-ignore
         copy.category_id.$eq = copy.category_id.$eq?._id
       }
       return copy;
-    })
-    watch(() => filter_sub_category.value, (val) => {
-      sub_cate.value.filterSelect(val)
     });
 
-    const {updateProductOptionData} = updateProductOption(props, context)
-    const {updateProductData} = updateProduct(props, context)
+    watch(() => filter_sub_category.value, (val) => {
+      sub_cate.value.filterSelect(val);
+    });
+
+    const {updateProductOptionData} = updateProductOption(props, context);
+    const {updateProductData} = updateProduct(props, context);
+
     return {
       dialog,
       default_image,
-      query,
+      query,sub_cate,
       sub_category_condition,
-      sub_cate,
       filter_sub_category,
       selected_product,
-      selected,
-      check_all,
-      columns,
-      variant_ids,
+      selected, variant_ids,
+      check_all, columns,
       setImagePosition,
       filterSelected,
-      onItemClick,
       updateProductOptionData,
       updateProductData
     }

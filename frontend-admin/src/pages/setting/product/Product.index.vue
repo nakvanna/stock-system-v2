@@ -59,7 +59,8 @@ export default {
   setup() {
     const table = ref();
     const dialog = ref();
-    const {grid_data, mapProduct, showAll} = readProduct(table)
+    const {grid_data, mapProduct, showAll} = readProduct(table);
+
     return {
       dialog,
       table,

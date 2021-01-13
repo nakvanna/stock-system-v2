@@ -7,7 +7,7 @@
     <q-card>
       <q-card-section class="q-pt-none">
         <q-form
-          @submit="create"
+          @submit="createData"
         >
           <div class="row">
             <q-input
@@ -32,12 +32,9 @@
 
 <script lang="ts">
 import {computed, defineComponent, ref} from "@vue/composition-api";
-import {createBrand} from "pages/brand/store/brand.store";
-import {createGlobal} from "pages/global.store";
-import {create_brand_graphql} from "pages/brand/graphql/create-brand.graphql";
-import {BrandModel} from "pages/brand/model/brand.model";
+import {createBrand} from "pages/setting/sub-setting/brand/store/brand.store";
 
-export default defineComponent({
+export default {
   name: "brand.create",
   props: {
     value: {
@@ -45,32 +42,25 @@ export default defineComponent({
       default: false
     }
   },
-  setup(prop, context){
+  setup(props: any, context: any){
     const dialog = ref(false);
-    const create_data = ref<BrandModel>({})
     const isShow = computed({
-      get: () => prop.value,
+      get: () => props.value,
       set: (value) => {
         context.emit("input", value);
       },
     });
 
-    const mapped = computed(function () {
-      return {
-        ...create_data.value,
-      }
-    });
-
-    const {create} = createGlobal(context, mapped, create_brand_graphql)
+    const {createData, create_data} = createBrand(props, context)
 
     return {
       dialog,
       isShow,
       create_data,
-      create,
+      createData,
     }
   }
-})
+}
 </script>
 
 <style scoped>

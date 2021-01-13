@@ -48,7 +48,7 @@ import {createSubCategory} from "pages/setting/sub-setting/sub-category/store/su
 import SearchSelect from "components/SearchSelect.vue";
 import {category_graphql} from "pages/setting/sub-setting/category/graphql/category.graphql";
 
-export default defineComponent({
+export default {
   name: "SubCategory.create",
   components: {SearchSelect},
   props: {
@@ -57,10 +57,10 @@ export default defineComponent({
       default: false
     }
   },
-  setup(prop, context){
+  setup(props: any, context: any){
     const dialog = ref(false);
     const isShow = computed({
-      get: () => prop.value,
+      get: () => props.value,
       set: (value) => {
         context.emit("input", value);
       },
@@ -69,7 +69,7 @@ export default defineComponent({
       categories: category_graphql
     })
 
-    const {create_data, createData} = createSubCategory(prop, context);
+    const {create_data, createData} = createSubCategory(props, context);
 
     return {
       dialog,
@@ -79,7 +79,7 @@ export default defineComponent({
       createData,
     }
   }
-})
+}
 </script>
 
 <style scoped>

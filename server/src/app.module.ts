@@ -8,7 +8,7 @@ import { ProductModule } from './product/product.module';
 import { ProductOptionModule } from './product-option/product-option.module';
 import { ProductMediaModule } from './product-media/product-media.module';
 import {PurchaseModule} from "./purchase/purchase.module";
-import {InventoryModule} from "./purchase-detail/inventory.module";
+import {InventoryModule} from "./inventory/inventory.module";
 import {SupplierModule} from "./supplier/supplier.module";
 
 @Module({

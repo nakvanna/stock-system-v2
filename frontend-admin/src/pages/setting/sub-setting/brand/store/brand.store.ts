@@ -107,7 +107,7 @@ export function updateBrand(prop: any, context: any, table: any) {
   })
 
   //--function--//
-  const updateData = async (id: string, key: string, value: any) => {
+  const updateBrandData = async (id: string, key: string, value: any) => {
     update_data.value._id = id;
     //@ts-ignore
     update_data.value[key] = value;
@@ -138,45 +138,6 @@ export function updateBrand(prop: any, context: any, table: any) {
   //--end vue apollo--//
 
   return {
-    updateData
-  }
-}
-
-/*DELETE*/
-export function deleteBrand(prop: any, context: any, table: any) {
-  //--variables--//
-  const id = ref("");
-  //--end variables--//
-
-  //--function--//
-  const removeData = (_id: string) => {
-    id.value = _id;
-    context.root.$q.dialog({
-      title: 'ផ្ទៀងផ្ទាត់',
-      message: 'ពិតជាចង់ដំណើរការ?',
-      cancel: true,
-      persistent: true
-    }).onOk(async () => {
-      await remove().then((data: any) => {
-        onSuccess(data?.data.removeBrand, context);
-      })
-    })
-  }
-  //--end function--//
-
-  //--remove vue apollo--//
-  const {mutate: remove, onDone} = useMutation(remove_brand_graphql, () => ({
-    variables: {id: id.value}
-  }));
-
-  onDone((data: any) => {
-    if (data.data.removeBrand.success) {
-      table.value.refetch();
-    }
-  })
-  //--end remove vue apollo--//
-
-  return {
-    removeData
+    updateBrandData
   }
 }

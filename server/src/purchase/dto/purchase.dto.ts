@@ -9,7 +9,7 @@ export class PurchaseType extends PartialType(ErrorHandlingType) {
     @Field({nullable: true})
     supplier_id: string;
     @Field({nullable: true})
-    purchase_date: string;
+    purchase_date: Date;
     @Field({nullable: true})
     purchase_status: string;
     @Field({nullable: true})

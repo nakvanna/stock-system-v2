@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-md">
-    <q-form @submit="">
+    <q-form @submit="createPurchaseData">
       <div class="row q-pa-md q-gutter-lg">
         <span class="text-h6 text-bold">បន្ថែមទំនិញថ្មី</span>
         <q-space/>
@@ -15,40 +15,41 @@
                   class="col-4 q-pr-xs"
                   dense
                   outlined
-                  label="ប្រភេទ"
+                  label="ឈ្មោះ"
                   v-model="create_data.supplier_id"
-                  hint="ជ្រើសរើសប្រភេទ"
+                  hint="ជ្រើសរើសអ្នកផ្គត់ផ្គង់"
                   option_label="name"
                   :query="query.supplier"
-                  query_name="categories"
+                  query_name="suppliers"
                   :hide_selected="true"
                   search_field="name"
-                />
-                <search-select
-                  class="col-4  q-pr-xs"
-                  dense
-                  outlined
-                  label="ប្រភេទ"
-                  v-model="create_data.purchase_date"
-                  hint="ជ្រើសរើសប្រភេទ"
-                  option_label="name"
-                  :query="query.supplier"
-                  query_name="categories"
-                  :hide_selected="true"
-                  search_field="name"
-                />
-                <search-select
+                >
+                  <template v-slot:option="scope">
+                    <q-item
+                      v-bind="scope.itemProps"
+                      v-on="scope.itemEvents"
+                    >
+                      <q-item-section>
+                        <q-item-label class="text-primary">
+                          {{ scope.opt.name }} - ({{ scope.opt.company }})
+                        </q-item-label>
+                        <q-item-label caption class="q-gutter-sm">
+                          <q-badge color="blue-1" text-color="blue" :label="scope.opt.phone"/>
+                          <q-badge color="blue-1" text-color="blue" :label="scope.opt.email"/>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                    <q-separator/>
+                  </template>
+                </search-select>
+                <date-picker class="col-4 q-pr-xs" label="ថ្ងៃទិញ" v-model="create_data.purchase_date" />
+                <q-select
+                  outlined dense
                   class="col-4"
-                  dense
-                  outlined
-                  label="ប្រភេទ"
                   v-model="create_data.purchase_status"
+                  :options="['Pending', 'Receive']"
                   hint="ជ្រើសរើសប្រភេទ"
-                  option_label="name"
-                  :query="query.supplier"
-                  query_name="categories"
-                  :hide_selected="true"
-                  search_field="name"
+                  label="Status"
                 />
               </div>
               <div class="row q-mt-md">
@@ -79,14 +80,22 @@
           <q-card style="min-width: 100%">
             <q-card-section>
               <div class="text-center">
-                <span class="text-h6">$1500.00</span>
+                <div v-show="false">
+                  {{ create_data.amount = amount}}
+                </div>
+                <span class="text-h5">
+                  <strong>សរុប</strong> ${{ amount.toFixed(2) }}
+                </span>
               </div>
               <div class="row">
-                <div class="col-6 q-pr-xs">
-                  <q-input label="Paid" v-model="create_data.paid_amount" type="number"/>
+                <div class="text-primary text-h6 col-6 q-pr-xs">
+                  <strong>ចំណាយ</strong> ${{ create_data.paid_amount }}
+                  <q-popup-edit v-model.number="create_data.paid_amount">
+                    <q-input prefix="$" type="number" v-model.number="create_data.paid_amount" dense autofocus />
+                  </q-popup-edit>
                 </div>
-                <div class="col-6">
-                  <q-input label="Due" v-model="create_data.due_amount" type="number"/>
+                <div class="text-negative text-h6 col-6">
+                  <strong>ជំពាក់</strong> ${{ create_data.due_amount }}
                 </div>
               </div>
             </q-card-section>
@@ -101,7 +110,6 @@
                 dense class="q-pb-xs"
                 outlined
                 label="ប្រភេទ"
-                v-model="create_data.product_id"
                 hint="ជ្រើសរើសទំនិញ"
                 option_label="sku"
                 :query="query.product_option"
@@ -130,12 +138,12 @@
                   <q-separator/>
                 </template>
               </search-select>
-              <div v-if="selected_data.length">
+              <div>
                 <q-table
-                  :data="selected_data"
+                  :data="create_data.create_inventory_input"
                   :columns="columns"
                   row-key="sku"
-                  hide-bottom
+                  :rows-per-page-options="[0]"
                 >
                   <template v-slot:body="props">
                     <q-tr :props="props">
@@ -185,7 +193,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, reactive, ref} from "@vue/composition-api";
+import {computed, defineComponent, reactive, ref, watch} from "@vue/composition-api";
 import {createBrand} from "pages/brand/store/brand.store";
 import {createGlobal} from "pages/global.store";
 import {create_brand_graphql} from "pages/brand/graphql/create-brand.graphql";
@@ -196,13 +204,14 @@ import {category_graphql} from "pages/setting/sub-setting/category/graphql/categ
 import {filter_sub_categories_graphql} from "pages/setting/sub-setting/sub-category/graphql/sub-category.graphql";
 import {brand_graphql} from "pages/setting/sub-setting/brand/graphql/brand.graphql";
 import {filter_product_option_graphql} from "pages/setting/product/view/graphql/product-option.graphql";
+import {supplier_graphql} from "pages/purchase/view/graphql/supplier.graphql";
+import DatePicker from "components/DatePicker.vue";
 
 export default defineComponent({
   name: "PurchaseCreate",
-  components: {SearchSelect},
+  components: {DatePicker, SearchSelect},
 
   setup(props: any, context: any){
-    const selected_data = ref<any>([]);
     const columns = ref([
       {
         align: 'left',
@@ -235,15 +244,28 @@ export default defineComponent({
       },
     ])
     const query = reactive({
-      supplier: category_graphql,
+      supplier: supplier_graphql,
       product_option: filter_product_option_graphql,
     });
-    const {create_data} = createPurchase(props, context)
+    const {create_data, createPurchaseData} = createPurchase(props, context)
+
+    const amount = computed(()=> {
+      if (create_data.value.create_inventory_input){
+        return create_data.value.create_inventory_input.map((m: any) => {
+          return (m.purchase_qty * m.buy_price) - ((m.purchase_qty * m.buy_price * m.discount) / 100) + ((m.purchase_qty * m.buy_price * m.tax) / 100)
+        }).reduce((a: number, b: number) => a + b, 0)
+      }
+    })
+
+    watch(create_data.value, (val: any) => {
+      val.due_amount = val.amount - val.paid_amount;
+    })
 
     const inputSelect = ((data: any) => {
-      const exist = selected_data.value.some((s: any) => s.sku === data.sku);
+      const exist = create_data.value.create_inventory_input.some((s: any) => s.sku === data.sku);
       if ( !exist ){
-        selected_data.value.push({
+        delete data.product_id;
+        create_data.value.create_inventory_input.push({
           ...data,
           purchase_qty: 1,
           buy_price: 0,
@@ -253,11 +275,12 @@ export default defineComponent({
       }
     })
     return {
+      createPurchaseData,
       create_data,
       query,
       inputSelect,
-      selected_data,
       columns,
+      amount,
     }
   }
 })
