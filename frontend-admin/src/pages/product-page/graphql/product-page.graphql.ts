@@ -136,6 +136,11 @@ export const product_option_one_graphql = gql`
         option2
         option3
         barcode
+        inventories{
+          _id
+          purchase_status
+          stock_qty
+        }
       }
       createdAt
     }

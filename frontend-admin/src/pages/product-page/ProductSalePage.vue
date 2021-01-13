@@ -73,6 +73,44 @@
               </div>
             </div>
           </div>
+          <div class="row q-pt-md" v-if="product_option_filtered.length">
+            <div class="col text-right">
+              <q-btn
+                @click="minusCartQty" rounded dense
+                color="primary" size="md" icon="remove"
+              />
+              <span class="q-px-lg text-h6">{{add_cart_qty}}</span>
+              <q-btn
+                @click="addCartQty(product_option_filtered[0].inventories.map(m => m.stock_qty).reduce((a,b)=> a + b, 0))" rounded dense
+                color="primary" size="md" icon="add"
+              />
+            </div>
+            <div class="col q-pt-sm">
+              <span class="q-px-lg text-grey-5">
+                {{product_option_filtered[0].inventories.map(m => m.stock_qty).reduce((a,b)=> a + b, 0)}}
+                ចំនួនក្នុងស្ដុក
+              </span>
+            </div>
+          </div>
+          <div class="row q-pt-md" v-else>
+            <div class="col text-right">
+              <q-btn
+                @click="minusCartQty" rounded dense
+                color="primary" size="md" icon="remove"
+              />
+              <span class="q-px-lg text-h6">{{add_cart_qty}}</span>
+              <q-btn
+                @click="addCartQty(result.product.product_option.map(m => m.inventories.map(m1 => m1.stock_qty).reduce((a,b)=> a + b, 0)).reduce((a, b) => a + b, 0))" rounded dense
+                color="primary" size="md" icon="add"
+              />
+            </div>
+            <div class="col q-pt-sm">
+              <span class="q-px-lg text-grey-5">
+                {{result.product.product_option.map(m => m.inventories.map(m1 => m1.stock_qty).reduce((a,b)=> a + b, 0)).reduce((a, b) => a + b, 0)}}
+                ចំនួនក្នុងស្ដុក
+              </span>
+            </div>
+          </div>
           <div class="row q-pa-md q-gutter-sm">
             <q-btn class="col-6" style="background: #FF0080; color: white" label="Add to cart" />
             <q-btn class="col" style="background: goldenrod; color: white" label="Buy it now" />
@@ -95,6 +133,7 @@ export default {
   setup(props: any, context: any){
     const image_position = ref(1);
     const product_option_filtered = ref<any>([]);
+    const add_cart_qty = ref(1);
     const select = ref();
 
     const variants = reactive({
@@ -111,8 +150,22 @@ export default {
       product_option_filtered.value = result.value.product.product_option.filter(
         (f: any) => f.option1 === value.variant1 && f.option2 === value.variant2 && f.option3 === value.variant3);
       if (product_option_filtered.value.length){
-        console.log(product_option_filtered.value.length)
+        add_cart_qty.value = 1;
         image_position.value = product_option_filtered.value[0].image_position
+      }
+    })
+
+    const addCartQty = ((limit: number) => {
+      if (add_cart_qty.value < limit){
+        add_cart_qty.value ++
+      }else {
+        alert('Out of stock!')
+      }
+    })
+
+    const minusCartQty = (() => {
+      if (add_cart_qty.value > 1){
+        add_cart_qty.value --
       }
     })
 
@@ -126,7 +179,10 @@ export default {
       variants,
       image_position,
       product_option_filtered,
-      select
+      select,
+      add_cart_qty,
+      addCartQty,
+      minusCartQty
     }
   }
 }

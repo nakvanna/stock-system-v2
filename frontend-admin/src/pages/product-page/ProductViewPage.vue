@@ -52,7 +52,6 @@
         </q-card>
       </div>
     </div>
-    {{result.products.edges[0]}}
   </q-page>
 </template>
 

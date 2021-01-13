@@ -6,14 +6,16 @@ import { CreateProductOptionInput } from './input/create-product-option.input';
 import { UpdateProductOptionInput } from './input/update-product-option.input';
 import { ProductService } from 'src/product/product.service';
 import {ProductType} from "../product/dto/product.dto";
-import {ProductModel} from "../product/models/product.model";
 import {ProductOptionModel} from "./models/product-option.model";
+import {InventoryService} from "../inventory/inventory.service";
+import {InventoryType} from "../inventory/dto/inventory.dto";
 
 @Resolver(() => ProductOptionType)
 export class ProductOptionResolver {
   constructor(
       private readonly service: ProductOptionService,
       private readonly productService: ProductService,
+      private readonly inventoryService: InventoryService,
   ) {}
 
   @Mutation(() => ProductOptionType)
@@ -47,6 +49,11 @@ export class ProductOptionResolver {
   @ResolveField(() => ProductType)
   product(@Parent() product_option: ProductOptionModel){
     return this.productService.findByProductOption(product_option.product_id);
+  }
+
+  @ResolveField(() => [InventoryType])
+  inventories(@Parent() product_option: ProductOptionModel){
+    return this.inventoryService.findByProductOption(product_option._id);
   }
 
 }

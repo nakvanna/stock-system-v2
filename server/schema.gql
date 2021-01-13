@@ -120,6 +120,39 @@ type ProductMediaCursorPagination {
   pageInfo: ProductMediaTypePageInfo
 }
 
+type InventoryType {
+  createdAt: DateTime
+  updatedAt: DateTime
+  success: Boolean
+  message: String
+  _id: ID
+  purchase_id: String
+  product_option_id: String
+  purchase_status: String
+  stock_qty: Float
+  purchase_qty: Float
+  buy_price: Float
+  status: Boolean
+  product_option: ProductOptionType!
+}
+
+type InventoryTypeEdge {
+  cursor: String
+  node: InventoryType
+}
+
+type InventoryTypePageInfo {
+  hasNextPage: Boolean
+  endCursor: String
+}
+
+type InventoryCursorPagination {
+  edges: [InventoryTypeEdge!]
+  nodes: [InventoryType!]
+  totalCount: Int
+  pageInfo: InventoryTypePageInfo
+}
+
 type ProductOptionType {
   createdAt: DateTime
   updatedAt: DateTime
@@ -138,6 +171,7 @@ type ProductOptionType {
   option3: String
   status: Boolean
   product: ProductType!
+  inventories: [InventoryType!]!
 }
 
 type ProductOptionTypeEdge {
@@ -199,39 +233,6 @@ type ProductCursorPagination {
   nodes: [ProductType!]
   totalCount: Int
   pageInfo: ProductTypePageInfo
-}
-
-type InventoryType {
-  createdAt: DateTime
-  updatedAt: DateTime
-  success: Boolean
-  message: String
-  _id: ID
-  purchase_id: String
-  product_option_id: String
-  purchase_status: String
-  stock_qty: Float
-  purchase_qty: Float
-  buy_price: Float
-  status: Boolean
-  product_option: ProductOptionType!
-}
-
-type InventoryTypeEdge {
-  cursor: String
-  node: InventoryType
-}
-
-type InventoryTypePageInfo {
-  hasNextPage: Boolean
-  endCursor: String
-}
-
-type InventoryCursorPagination {
-  edges: [InventoryTypeEdge!]
-  nodes: [InventoryType!]
-  totalCount: Int
-  pageInfo: InventoryTypePageInfo
 }
 
 type PurchaseType {

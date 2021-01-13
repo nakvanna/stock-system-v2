@@ -147,6 +147,9 @@
                 >
                   <template v-slot:body="props">
                     <q-tr :props="props">
+                      <q-td key="action" :props="props">
+                        <q-btn @click="removeProductOption(props.pageIndex)" outline dense round color="negative" icon="clear" />
+                      </q-td>
                       <q-td key="product" :props="props">
                         {{ props.row.product.title }} - ({{props.row.sku}})
                       </q-td>
@@ -215,6 +218,9 @@ export default defineComponent({
     const columns = ref([
       {
         align: 'left',
+        name: 'action',
+      },{
+        align: 'left',
         name: 'product',
         label: 'ទំនិញ',
       },{
@@ -261,6 +267,9 @@ export default defineComponent({
       val.due_amount = val.amount - val.paid_amount;
     })
 
+    const removeProductOption = ((index: any) => {
+      create_data.value.create_inventory_input.splice(index, 1)
+    })
     const inputSelect = ((data: any) => {
       const exist = create_data.value.create_inventory_input.some((s: any) => s.sku === data.sku);
       if ( !exist ){
@@ -281,6 +290,7 @@ export default defineComponent({
       inputSelect,
       columns,
       amount,
+      removeProductOption
     }
   }
 })
