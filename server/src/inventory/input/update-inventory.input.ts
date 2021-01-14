@@ -15,5 +15,9 @@ export class UpdateInventoryInput {
     @Field({nullable: true})
     buy_price: number;
     @Field({nullable: true})
+    discount: number;
+    @Field({nullable: true})
+    tax: number;
+    @Field({nullable: true})
     status: boolean;
 }

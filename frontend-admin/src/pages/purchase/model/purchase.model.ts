@@ -20,5 +20,7 @@ export interface InventoryModel {
   stock_qty?: number;
   purchase_qty?: number;
   buy_price?: number;
+  discount: 0;
+  tax: 0;
   status?: boolean;
 }

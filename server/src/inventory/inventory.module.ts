@@ -2,7 +2,7 @@ import {forwardRef, Module} from '@nestjs/common';
 import {MongooseModule} from '@nestjs/mongoose';
 import {InventorySchema} from "./models/inventory.schema";
 import {InventoryService} from "./inventory.service";
-import { InventoryResolver } from './inventory.resolver';
+import {InventoryResolver} from './inventory.resolver';
 import {PurchaseModule} from "../purchase/purchase.module";
 import {ProductOptionModule} from "../product-option/product-option.module";
 

@@ -86,8 +86,8 @@ export class InventoryService {
         }
     }
 
-    async findByParent(_id: string): Promise<InventoryModel> {
-        return this.model.findOne({_id})
+    async findByPurchase(purchase_id: string): Promise<InventoryModel[]> {
+        return this.model.find({purchase_id})
     }
 
     async findByProductOption(product_option_id: string): Promise<InventoryModel[]>{

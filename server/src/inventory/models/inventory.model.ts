@@ -7,5 +7,7 @@ export interface InventoryModel extends ErrorHandlingEntity {
     stock_qty: number;
     purchase_qty: number;
     buy_price: number;
+    discount: number;
+    tax: number;
     status: boolean;
 }

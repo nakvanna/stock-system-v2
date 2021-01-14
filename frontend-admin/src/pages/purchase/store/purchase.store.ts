@@ -53,6 +53,8 @@ export function createPurchase(prop: any, context: any) {
           purchase_status: create_data.value.purchase_status,
           stock_qty: m.purchase_qty,
           purchase_qty: m.purchase_qty,
+          discount: m.discount,
+          tax: m.tax,
           buy_price: m.buy_price,
         }
       })
@@ -133,6 +135,7 @@ export const readPurchase = (table: any) => {
       amount: `$${x.node.amount.toFixed(2)}`,
       paid_amount: `$${x.node.paid_amount.toFixed(2)}`,
       due_amount: `$${x.node.due_amount.toFixed(2)}`,
+      supplier_name: x.node.supplier.name,
       purchase_date: x.node.purchase_date,
       createdAt: x.node.createdAt,
       // purchase_date: new Date(new Date(x.node.purchase_date).toDateString()),

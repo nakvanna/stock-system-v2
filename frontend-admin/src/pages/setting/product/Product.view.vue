@@ -1,15 +1,12 @@
 <template>
   <q-page>
-    <q-form
-      @submit=""
-    >
-      <div class="row q-pa-md q-gutter-lg">
-        <span class="text-h6 text-bold">បន្ថែមទំនិញថ្មី</span>
-        <q-space/>
-        <q-btn outline to="/settings" icon="fas fa-arrow-alt-circle-left"/>
-      </div>
-      <q-separator/>
-      <div class="row">
+    <div class="row q-pa-sm q-gutter-lg">
+      <span class="text-h6 text-bold">បន្ថែមទំនិញថ្មី</span>
+      <q-space/>
+      <q-btn outline to="/settings" icon="fas fa-arrow-alt-circle-left"/>
+    </div>
+    <q-separator/>
+    <div class="row">
         <div class="col-8">
           <div class="row q-pa-md">
             <q-card style="min-width: 100%">
@@ -377,7 +374,6 @@
           </div>
         </div>
       </div>
-    </q-form>
     <add-variant-image :dialog.sync="dialog.add_variant_image" :variant_ids.sync="variant_ids" v-model="selected_product.product_media"/>
   </q-page>
 </template>

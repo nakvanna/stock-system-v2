@@ -8,6 +8,8 @@ export const InventorySchema = new mongoose.Schema(
     stock_qty: {type: Number, required: true},
     purchase_qty: {type: Number, required: true},
     buy_price: {type: Number, required: true},
+    discount: {type: Number, required: true},
+    tax: {type: Number, required: true},
     status: {type: Boolean, default: true},
     },
     {timestamps: true},

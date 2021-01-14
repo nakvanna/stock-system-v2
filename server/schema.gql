@@ -132,6 +132,8 @@ type InventoryType {
   stock_qty: Float
   purchase_qty: Float
   buy_price: Float
+  discount: Float
+  tax: Float
   status: Boolean
   product_option: ProductOptionType!
 }
@@ -235,39 +237,6 @@ type ProductCursorPagination {
   pageInfo: ProductTypePageInfo
 }
 
-type PurchaseType {
-  createdAt: DateTime
-  updatedAt: DateTime
-  success: Boolean
-  message: String
-  _id: ID
-  supplier_id: String
-  purchase_date: DateTime
-  purchase_status: String
-  amount: Float
-  paid_amount: Float
-  due_amount: Float
-  description: String
-  status: Boolean
-}
-
-type PurchaseTypeEdge {
-  cursor: String
-  node: PurchaseType
-}
-
-type PurchaseTypePageInfo {
-  hasNextPage: Boolean
-  endCursor: String
-}
-
-type PurchaseCursorPagination {
-  edges: [PurchaseTypeEdge!]
-  nodes: [PurchaseType!]
-  totalCount: Int
-  pageInfo: PurchaseTypePageInfo
-}
-
 type SupplierType {
   createdAt: DateTime
   updatedAt: DateTime
@@ -298,6 +267,41 @@ type SupplierCursorPagination {
   nodes: [SupplierType!]
   totalCount: Int
   pageInfo: SupplierTypePageInfo
+}
+
+type PurchaseType {
+  createdAt: DateTime
+  updatedAt: DateTime
+  success: Boolean
+  message: String
+  _id: ID
+  supplier_id: String
+  purchase_date: DateTime
+  purchase_status: String
+  amount: Float
+  paid_amount: Float
+  due_amount: Float
+  description: String
+  status: Boolean
+  supplier: SupplierType!
+  inventory: [InventoryType!]!
+}
+
+type PurchaseTypeEdge {
+  cursor: String
+  node: PurchaseType
+}
+
+type PurchaseTypePageInfo {
+  hasNextPage: Boolean
+  endCursor: String
+}
+
+type PurchaseCursorPagination {
+  edges: [PurchaseTypeEdge!]
+  nodes: [PurchaseType!]
+  totalCount: Int
+  pageInfo: PurchaseTypePageInfo
 }
 
 type Query {
@@ -471,6 +475,8 @@ input CreateInventoryInput {
   purchase_status: String
   stock_qty: Float
   purchase_qty: Float
+  discount: Float
+  tax: Float
   buy_price: Float
 }
 
@@ -481,6 +487,8 @@ input UpdateInventoryInput {
   stock_qty: Float
   purchase_qty: Float
   buy_price: Float
+  discount: Float
+  tax: Float
   status: Boolean
 }
 

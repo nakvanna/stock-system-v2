@@ -88,7 +88,7 @@ export class SupplierService {
     }
   }
 
-  async findByParent(_id: string): Promise<SupplierModel> {
+  async findByPurchase(_id: string): Promise<SupplierModel> {
     return this.model.findOne({_id})
   }
 }

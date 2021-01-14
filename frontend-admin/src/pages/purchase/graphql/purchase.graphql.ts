@@ -19,6 +19,10 @@ export const purchase_graphql = gql`
             paid_amount
             due_amount
             createdAt
+            supplier{
+              _id
+              name
+            }
           }
         }
         pageInfo {

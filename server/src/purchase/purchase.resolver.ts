@@ -1,16 +1,21 @@
-import {Args, ID, Mutation, Query, Resolver} from '@nestjs/graphql';
+import {Args, ID, Mutation, Query, ResolveField, Resolver, Parent} from '@nestjs/graphql';
 import {InputCursorPaginationOption} from 'shared/cursor-pagination';
 import {PurchaseCursorPagination, PurchaseType} from "./dto/purchase.dto";
 import {PurchaseService} from './purchase.service';
 import {CreatePurchaseInput} from "./input/create-purchase.input";
 import {UpdatePurchaseInput} from './input/update-purchase.input';
 import {InventoryService} from "../inventory/inventory.service";
+import {SupplierType} from "../supplier/dto/supplier.dto";
+import {PurchaseModel} from "./models/purchase.model";
+import {SupplierService} from "../supplier/supplier.service";
+import {InventoryType} from "../inventory/dto/inventory.dto";
 
 @Resolver(() => PurchaseType)
 export class PurchaseResolver {
     constructor(
         private readonly service: PurchaseService,
-        private readonly inventoryService: InventoryService
+        private readonly inventoryService: InventoryService,
+        private readonly supplierService: SupplierService,
     ) {
     }
 
@@ -49,5 +54,14 @@ export class PurchaseResolver {
     @Mutation(() => PurchaseType)
     removePurchase(@Args('id') id: string) {
         return this.service.remove(id);
+    }
+
+    @ResolveField(() => SupplierType)
+    supplier(@Parent() purchase: PurchaseModel){
+        return this.supplierService.findByPurchase(purchase.supplier_id)
+    }
+    @ResolveField(() => InventoryType)
+    inventory(@Parent() purchase: PurchaseModel){
+        return this.inventoryService.findByPurchase(purchase._id)
     }
 }

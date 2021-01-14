@@ -95,7 +95,7 @@
                   </q-popup-edit>
                 </div>
                 <div class="text-negative text-h6 col-6">
-                  <strong>ជំពាក់</strong> ${{ create_data.due_amount }}
+                  <strong>ជំពាក់</strong> ${{ create_data.due_amount.toFixed(2) }}
                 </div>
               </div>
             </q-card-section>

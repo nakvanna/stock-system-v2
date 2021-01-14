@@ -13,5 +13,9 @@ export class CreateInventoryInput {
     @Field({nullable: true})
     purchase_qty: number;
     @Field({nullable: true})
+    discount: number;
+    @Field({nullable: true})
+    tax: number;
+    @Field({nullable: true})
     buy_price: number;
 }

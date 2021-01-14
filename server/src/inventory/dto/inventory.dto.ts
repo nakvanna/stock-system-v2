@@ -20,6 +20,10 @@ export class InventoryType extends PartialType(ErrorHandlingType) {
     @Field({nullable: true})
     buy_price: number;
     @Field({nullable: true})
+    discount: number;
+    @Field({nullable: true})
+    tax: number;
+    @Field({nullable: true})
     status: boolean;
     @Field(() => ProductOptionType)
     product_option: string;
