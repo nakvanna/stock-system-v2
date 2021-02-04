@@ -6,7 +6,8 @@
         <q-space/>
         <q-btn outline to="/purchases" icon="fas fa-arrow-alt-circle-left"/>
       </div>
-      <div class="row">
+      <q-separator/>
+      <div class="row q-pt-sm">
         <div class="col-8 q-pb-md q-pr-xs">
           <q-card style="min-width: 100%">
             <q-card-section>
@@ -111,11 +112,11 @@
                 outlined
                 label="ប្រភេទ"
                 hint="ជ្រើសរើសទំនិញ"
-                option_label="sku"
+                option_label="title"
                 :query="query.product_option"
-                query_name="product_options"
+                query_name="products"
                 :hide_selected="true"
-                search_field="sku"
+                search_field="title"
                 @input="inputSelect"
                 :validate="false"
               >
@@ -126,13 +127,13 @@
                   >
                     <q-item-section>
                       <q-item-label class="text-primary">
-                        {{ scope.opt.product.title }} - ({{ scope.opt.sku ? scope.opt.sku : 'មិនមាន' }})
+                        {{ scope.opt.title }} - ({{ scope.opt.product_option.length }})
                       </q-item-label>
-                      <q-item-label caption class="q-gutter-sm">
-                        <q-badge color="blue-1" text-color="blue" :label="scope.opt.option1"/>
-                        <q-badge color="blue-1" text-color="blue" :label="scope.opt.option2"/>
-                        <q-badge color="blue-1" text-color="blue" :label="scope.opt.option3"/>
-                      </q-item-label>
+<!--                      <q-item-label caption class="q-gutter-sm">-->
+<!--                        <q-badge color="blue-1" text-color="blue" :label="scope.opt.option1"/>-->
+<!--                        <q-badge color="blue-1" text-color="blue" :label="scope.opt.option2"/>-->
+<!--                        <q-badge color="blue-1" text-color="blue" :label="scope.opt.option3"/>-->
+<!--                      </q-item-label>-->
                     </q-item-section>
                   </q-item>
                   <q-separator/>
@@ -151,7 +152,7 @@
                         <q-btn @click="removeProductOption(props.pageIndex)" outline dense round color="negative" icon="clear" />
                       </q-td>
                       <q-td key="product" :props="props">
-                        {{ props.row.product.title }} - ({{props.row.sku}})
+                        {{ props.row.title }} - ({{props.row.sku}})
                       </q-td>
                       <q-td key="purchase_qty" :props="props">
                         <q-input v-model.number="props.row.purchase_qty" type="number" />
@@ -209,6 +210,7 @@ import {brand_graphql} from "pages/setting/sub-setting/brand/graphql/brand.graph
 import {filter_product_option_graphql} from "pages/setting/product/view/graphql/product-option.graphql";
 import {supplier_graphql} from "pages/purchase/view/graphql/supplier.graphql";
 import DatePicker from "components/DatePicker.vue";
+import {product_option_from_product} from "pages/setting/product/graphql/product.graphql";
 
 export default defineComponent({
   name: "PurchaseCreate",
@@ -248,12 +250,13 @@ export default defineComponent({
         name: 'sell_price',
         label: 'តម្លៃលក់',
       },
-    ])
+    ]);
     const query = reactive({
       supplier: supplier_graphql,
-      product_option: filter_product_option_graphql,
+      product_option: product_option_from_product
     });
-    const {create_data, createPurchaseData} = createPurchase(props, context)
+
+    const {create_data, createPurchaseData} = createPurchase(props, context);
 
     const amount = computed(()=> {
       if (create_data.value.create_inventory_input){
@@ -261,28 +264,34 @@ export default defineComponent({
           return (m.purchase_qty * m.buy_price) - ((m.purchase_qty * m.buy_price * m.discount) / 100) + ((m.purchase_qty * m.buy_price * m.tax) / 100)
         }).reduce((a: number, b: number) => a + b, 0)
       }
-    })
+    });
 
     watch(create_data.value, (val: any) => {
       val.due_amount = val.amount - val.paid_amount;
-    })
+    });
 
     const removeProductOption = ((index: any) => {
       create_data.value.create_inventory_input.splice(index, 1)
-    })
+    });
+
     const inputSelect = ((data: any) => {
-      const exist = create_data.value.create_inventory_input.some((s: any) => s.sku === data.sku);
-      if ( !exist ){
-        delete data.product_id;
-        create_data.value.create_inventory_input.push({
-          ...data,
-          purchase_qty: 1,
-          buy_price: 0,
-          discount: 0,
-          tax: 0,
-        })
+      console.log(data.title)
+      for (let i = 0; i < data.product_option.length; i ++){
+        const exist = create_data.value.create_inventory_input.some((s: any) => s.sku === data.product_option[i].sku);
+        if ( !exist ){
+          delete data.product_option[i].product_id;
+          create_data.value.create_inventory_input.push({
+            ...data.product_option[i],
+            title: data.title,
+            purchase_qty: 1,
+            buy_price: 0,
+            discount: 0,
+            tax: 0,
+          })
+        }
       }
-    })
+    });
+
     return {
       createPurchaseData,
       create_data,

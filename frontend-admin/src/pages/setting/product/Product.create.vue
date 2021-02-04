@@ -305,7 +305,6 @@
              label="រក្សាទុក"/>
     </div>
     </q-form>
-    {{mapped}}
   </q-page>
 </template>
 

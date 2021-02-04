@@ -24,7 +24,7 @@
                 <q-item-label>បង្ហាញ</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item clickable v-close-popup dense :to="'/purchase/edit/' + '60004b5ab930c72cdebc4870'" >
+            <q-item clickable v-close-popup dense to="/purchase/edit/" >
               <q-item-section side>
                 <q-icon name="edit" color="blue-5" />
               </q-item-section>
@@ -60,9 +60,9 @@
         <e-column field='purchase_date' headerText='ថ្ងៃទិញ' format="dd/MMM/y" type="date" textAlign='Left'/>
         <e-column field='supplier_name' headerText='អ្នកផ្គត់ផ្គង់' textAlign='Left' width="150"/>
         <e-column field='purchase_status' headerText='ប្រភេទនៃការទិញ'  textAlign='Left' width="150"/>
-        <e-column field='amount' headerText='សរុប' textAlign='Left' width="150"/>
-        <e-column field='paid_amount' headerText='ចំណាយ' textAlign='Left' width="150"/>
-        <e-column field='due_amount' headerText='ជំពាក់' textAlign='Left' width="150"/>
+        <e-column field='amount_index' headerText='សរុប' textAlign='Left' width="150"/>
+        <e-column field='paid_amount_index' headerText='ចំណាយ' textAlign='Left' width="150"/>
+        <e-column field='due_amount_index' headerText='ជំពាក់' textAlign='Left' width="150"/>
         <e-column field='createdAt' headerText='កាលបរិច្ឆេទ' format="dd/MMM/y" type="date" textAlign='Left'/>
       </e-columns>
     </e-j-s-grid>
@@ -77,11 +77,10 @@ import {readPurchase, updatePurchase} from "./store/purchase.store";
 export default defineComponent({
     name: "Purchase.index",
     components: {EJSGrid},
-    setup(prop, context) {
+    setup() {
       const table = ref();
       const dialog = ref();
       const {grid_data, mapPurchase, showAll} = readPurchase(table)
-      const {updatePurchaseData} = updatePurchase(prop, context, table);
 
       return {
         table,
@@ -89,7 +88,6 @@ export default defineComponent({
         mapPurchase,
         showAll,
         dialog,
-        updatePurchaseData,
       }
     }
   }

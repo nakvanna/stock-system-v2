@@ -22,6 +22,42 @@ export const purchase_graphql = gql`
             supplier{
               _id
               name
+              company
+              phone
+              email
+              address
+              note
+            }
+            inventory{
+              _id
+              purchase_status
+              stock_qty
+              purchase_qty
+              buy_price
+              tax
+              discount
+              product_option{
+                _id
+                sku
+                weight
+                weight_unit
+                price
+                barcode
+                image_position
+                option1
+                option2
+                option3
+                product{
+                  _id
+                  title
+                  description
+                  product_media{
+                    _id
+                    src
+                    position
+                  }
+                }
+              }
             }
           }
         }

@@ -1,12 +1,12 @@
 <template>
-  <q-page v-if="result">
+  <q-page class="q-pa-md" v-if="result">
     <div class="row q-pa-sm q-gutter-md">
       <span class="text-h6 text-bold">វិក័យបត្រទិញ</span>
       <q-space/>
       <q-btn outline to="/purchases" icon="fas fa-arrow-alt-circle-left"/>
     </div>
     <q-separator/>
-    <div class="row q-pa-sm q-gutter-sm">
+    <div class="row q-pt-sm q-gutter-sm">
       <div class="col-4">
         <q-card style="min-width: 100%">
           <q-card-section>
@@ -72,7 +72,7 @@
         </q-card>
       </div>
     </div>
-    <div class="row q-pa-sm">
+    <div class="row q-pt-sm">
       <div class="full-width">
         <q-table
           :data="result.purchase.inventory"
@@ -149,7 +149,7 @@ export default {
 
     return {
       result,
-      columns
+      columns,
     }
   }
 }

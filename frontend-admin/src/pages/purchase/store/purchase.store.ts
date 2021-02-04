@@ -6,6 +6,7 @@ import {create_purchase_graphql } from "../graphql/create-purchase.graphql";
 import {purchase_graphql} from "pages/purchase/graphql/purchase.graphql";
 import {update_purchase_graphql } from "../graphql/update-purchase.graphql";
 
+
 //--OnDone message--//
 function onSuccess(_data: any, context: any) {
   if (_data.success) {
@@ -25,6 +26,7 @@ function onSuccess(_data: any, context: any) {
   }
 }
 
+export const selected_purchase = ref({}) as any;
 /***CRUD Action***/
 
 /*CREATE*/
@@ -126,15 +128,20 @@ export const readPurchase = (table: any) => {
   watch(filter, (condition: any) => {
     table?.value?.filterTable(condition, 15, true)
   })
-
+  //set selected value
+  watch(grid_data.value, (value: any) => {
+    if (value.selected.length) {
+      selected_purchase.value = JSON.parse(JSON.stringify(value.selected[0]))
+    }
+  })
   //functions
   const showAll = () => table?.value?.filterTable(filter.value, 0, false);
   const mapPurchase = (x: any) => {
     return {
       ...x.node,
-      amount: `$${x.node.amount.toFixed(2)}`,
-      paid_amount: `$${x.node.paid_amount.toFixed(2)}`,
-      due_amount: `$${x.node.due_amount.toFixed(2)}`,
+      amount_index: `$${x.node.amount.toFixed(2)}`,
+      paid_amount_index: `$${x.node.paid_amount.toFixed(2)}`,
+      due_amount_index: `$${x.node.due_amount.toFixed(2)}`,
       supplier_name: x.node.supplier.name,
       purchase_date: x.node.purchase_date,
       createdAt: x.node.createdAt,
@@ -156,9 +163,9 @@ export const readPurchase = (table: any) => {
 };
 
 /*UPDATE*/
-export function updatePurchase(prop: any, context: any, table: any) {
+export function updatePurchase(prop: any, context: any) {
   //--variables--//
-  const update_data = ref<PurchaseModel>({});
+  const update_data = ref<PurchaseModel | any>({});
   //--end variables--//
 
   //computed
@@ -173,15 +180,8 @@ export function updatePurchase(prop: any, context: any, table: any) {
     update_data.value._id = id;
     //@ts-ignore
     update_data.value[key] = value;
-    context.root.$q.dialog({
-      title: 'ផ្ទៀងផ្ទាត់',
-      message: 'ពិតជាចង់ដំណើរការ?',
-      cancel: true,
-      persistent: true
-    }).onOk(async () => {
-      await update().then((data: any) => {
-        onSuccess(data?.data.updatePurchase, context);
-      })
+    await update().then((data: any) => {
+      onSuccess(data?.data.updatePurchase, context);
     })
   }
   //--end function--//
@@ -194,13 +194,13 @@ export function updatePurchase(prop: any, context: any, table: any) {
   onDone((data: any) => {
     if (data.data.updatePurchase.success) {
       update_data.value = {};
-      table.value.refetch();
     }
   })
   //--end vue apollo--//
 
   return {
-    updatePurchaseData
+    updatePurchaseData,
+    update_data
   }
 }
 

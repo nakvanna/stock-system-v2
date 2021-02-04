@@ -13,7 +13,6 @@
             indicator-color="primary"
           >
             <q-route-tab to="/settings" label="កត់ឈ្មោះទំនិញ" exact/>
-            <q-route-tab to="/settings/sku" label="កំណត់ទំនិញ" exact/>
           </q-tabs>
           <q-space/>
           <!--Right Tab-->

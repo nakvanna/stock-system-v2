@@ -141,6 +141,7 @@ export const readProduct = (table: any) => {
     return Object.assign({}, grid_data.value.filter);
   })
   //watch
+  //Filter
   watch(filter, (condition: any) => {
     table?.value?.filterTable(condition, 15, true)
   })

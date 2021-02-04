@@ -91,6 +91,6 @@ export class InventoryService {
     }
 
     async findByProductOption(product_option_id: string): Promise<InventoryModel[]>{
-        return this.model.find({product_option_id});
+        return this.model.find({product_option_id, purchase_status: 'Recieve'});
     }
 }

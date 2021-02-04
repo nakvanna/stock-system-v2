@@ -1,5 +1,6 @@
 <template>
-  <q-page>
+  <q-page v-if="JSON.stringify(selected_product) !== '{}'">
+    {{selected_product}}
     <div class="row q-pa-sm q-gutter-lg">
       <span class="text-h6 text-bold">បន្ថែមទំនិញថ្មី</span>
       <q-space/>

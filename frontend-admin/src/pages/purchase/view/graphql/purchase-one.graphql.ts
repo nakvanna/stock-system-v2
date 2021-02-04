@@ -28,6 +28,8 @@ export const purchase_one_graphql = gql`
         stock_qty
         purchase_qty
         buy_price
+        tax
+        discount
         product_option{
           _id
           sku
@@ -39,6 +41,16 @@ export const purchase_one_graphql = gql`
           option1
           option2
           option3
+          product{
+            _id
+            title
+            description
+            product_media{
+              _id
+              src
+              position
+            }
+          }
         }
       }
     }

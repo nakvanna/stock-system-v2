@@ -1,6 +1,28 @@
 <template>
   <div>
-    <q-input dense outlined :label="label" :hint="hint?hint:null" v-model="date" mask="date" :rules="['date']" autocomplete="off">
+    <q-input
+      v-if="validate" dense outlined
+      :label="label" :hint="hint?hint:null"
+      v-model="date" mask="date"
+      :rules="['date']" autocomplete="off"
+    >
+      <template v-slot:append>
+        <q-icon name="event" class="cursor-pointer">
+          <q-popup-proxy transition-show="scale" transition-hide="scale">
+            <q-date v-model="date">
+              <div class="row items-center justify-end">
+                <q-btn v-close-popup label="បិទ" color="primary" flat></q-btn>
+              </div>
+            </q-date>
+          </q-popup-proxy>
+        </q-icon>
+      </template>
+    </q-input>
+    <q-input
+      v-else dense outlined
+      :label="label" :hint="hint?hint:null"
+      v-model="date" mask="date" autocomplete="off"
+    >
       <template v-slot:append>
         <q-icon name="event" class="cursor-pointer">
           <q-popup-proxy transition-show="scale" transition-hide="scale">
@@ -28,6 +50,10 @@ export default {
     label: {
       type: String,
       required: true
+    },
+    validate: {
+      type: Boolean,
+      default: true
     },
     hint: {
       type: String,

@@ -95,3 +95,42 @@ export const filter_product_graphql = gql`
     }
   }
 `
+
+export const product_option_from_product = gql`
+    query productOptionFromproducts(
+      $first: Float!
+      $after: String!
+      $condition: JSON!
+    ){
+      products(options: {first: $first, after: $after, condition: $condition}){
+        totalCount
+        edges {
+          cursor
+          node {
+            _id
+            title
+            description
+            tags
+            product_status
+            createdAt
+            product_option{
+              _id
+              sku
+              weight
+              price
+              image_position
+              barcode
+              option1
+              option2
+              option3
+              status
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+`
