@@ -304,6 +304,39 @@ type PurchaseCursorPagination {
   pageInfo: PurchaseTypePageInfo
 }
 
+type CustomerType {
+  createdAt: DateTime
+  updatedAt: DateTime
+  success: Boolean
+  message: String
+  _id: ID
+  customer_name: String
+  contact_lastname: String
+  contact_firstname: String
+  phone: String
+  email: String
+  address1: String
+  address2: String
+  status: Boolean
+}
+
+type CustomerTypeEdge {
+  cursor: String
+  node: CustomerType
+}
+
+type CustomerTypePageInfo {
+  hasNextPage: Boolean
+  endCursor: String
+}
+
+type CustomerCursorPagination {
+  edges: [CustomerTypeEdge!]
+  nodes: [CustomerType!]
+  totalCount: Int
+  pageInfo: CustomerTypePageInfo
+}
+
 type Query {
   brands(options: InputCursorPaginationOption!): BrandCursorPagination!
   brand(id: ID!): BrandType!
@@ -323,6 +356,8 @@ type Query {
   purchase(id: ID!): PurchaseType!
   suppliers(options: InputCursorPaginationOption!): SupplierCursorPagination!
   supplier(id: ID!): SupplierType!
+  customers(options: InputCursorPaginationOption!): CustomerCursorPagination!
+  customer(id: ID!): CustomerType!
 }
 
 input InputCursorPaginationOption {
@@ -358,6 +393,7 @@ type Mutation {
   removeProductOption(id: String!): ProductOptionType!
   createInventory(create_input: CreateInventoryInput!): InventoryType!
   updateInventory(update_input: UpdateInventoryInput!, id: String!): InventoryType!
+  updateInventoryPurchaseStatus(update_input: UpdateInventoryInput!, purchase_id: String!): InventoryType!
   removeInventory(id: String!): InventoryType!
   createPurchase(create_input: CreatePurchaseInput!): PurchaseType!
   updatePurchase(update_input: UpdatePurchaseInput!, id: String!): PurchaseType!
@@ -365,6 +401,9 @@ type Mutation {
   createSupplier(create_input: CreateSupplierInput!): SupplierType!
   updateSupplier(update_input: UpdateSupplierInput!, id: String!): SupplierType!
   removeSupplier(id: String!): SupplierType!
+  createCustomer(create_input: CreateCustomerInput!): CustomerType!
+  updateCustomer(update_input: UpdateCustomerInput!, id: String!): CustomerType!
+  removeCustomer(id: String!): CustomerType!
 }
 
 input CreateBrandInput {
@@ -530,5 +569,27 @@ input UpdateSupplierInput {
   email: String
   address: String
   note: String
+  status: Boolean
+}
+
+input CreateCustomerInput {
+  customer_name: String
+  contact_lastname: String
+  contact_firstname: String
+  phone: String
+  email: String
+  address1: String
+  address2: String
+  status: Boolean
+}
+
+input UpdateCustomerInput {
+  customer_name: String
+  contact_lastname: String
+  contact_firstname: String
+  phone: String
+  email: String
+  address1: String
+  address2: String
   status: Boolean
 }

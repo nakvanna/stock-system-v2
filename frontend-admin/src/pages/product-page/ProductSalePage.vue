@@ -143,7 +143,8 @@ export default {
     });
 
     const variables = reactive({
-      id: context.root.$route.params.id
+      id: context.root.$route.params.id,
+      purchase_status: "Receive"
     });
 
     watch(variants, (value: any) => {

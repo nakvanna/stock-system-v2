@@ -41,6 +41,7 @@
         <e-column field='brand' headerText='ម៉ូដ' textAlign='Left' width="150"/>
         <e-column field='title' headerText='ឈ្មោះទំនិញ' textAlign='Left' width="150"/>
         <e-column field='description' headerText='ចំណាំ' textAlign='Left' width="150"/>
+        <e-column field='product_status' headerText='ចំណាំ' textAlign='Left' width="150"/>
         <e-column field='createdAt' headerText='កាលបរិច្ឆេទ' format="d/M/y" type="date" textAlign='Left'/>
       </e-columns>
     </e-j-s-grid>

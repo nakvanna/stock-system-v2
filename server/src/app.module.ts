@@ -10,6 +10,7 @@ import { ProductMediaModule } from './product-media/product-media.module';
 import {PurchaseModule} from "./purchase/purchase.module";
 import {InventoryModule} from "./inventory/inventory.module";
 import {SupplierModule} from "./supplier/supplier.module";
+import {CustomerModule} from "./customer/customer.module";
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import {SupplierModule} from "./supplier/supplier.module";
       ProductMediaModule,
       PurchaseModule,
       InventoryModule,
-      SupplierModule
+      SupplierModule,
+      CustomerModule
   ],
 })
 export class AppModule {}

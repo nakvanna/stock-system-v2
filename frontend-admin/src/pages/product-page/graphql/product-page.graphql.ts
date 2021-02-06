@@ -100,7 +100,7 @@ export const product_option_graphql = gql`
   }
 `
 
-export const product_option_one_graphql = gql`
+export const  product_option_one_graphql = gql`
   query product_option(
     $id: ID!
   ){

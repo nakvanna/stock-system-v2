@@ -40,6 +40,14 @@ export class InventoryResolver {
     }
 
     @Mutation(() => InventoryType)
+    updateInventoryPurchaseStatus(
+        @Args('purchase_id') purchase_id: string,
+        @Args('update_input') update_input: UpdateInventoryInput,
+    ) {
+        return this.service.updatePurchaseStatus(purchase_id, update_input);
+    }
+
+    @Mutation(() => InventoryType)
     removeInventory(@Args('id') id: string) {
         return this.service.remove(id);
     }

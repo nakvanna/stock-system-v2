@@ -71,6 +71,27 @@ export class InventoryService {
         }
     }
 
+    async updatePurchaseStatus(
+        purchase_id: string,
+        update_input: UpdateInventoryInput,
+    ): Promise<InventoryModel | ErrorHandlingMessage> {
+        try {
+            const data = await this.model.updateMany({purchase_id},
+                {$set: update_input},
+                {new: true},
+            );
+            data.message = 'បានកែប្រែ';
+            data.success = true;
+            return data;
+        } catch (e) {
+            return {
+                message: e.message.split(':')[0],
+                success: false,
+            };
+        }
+    }
+
+
     async remove(id: string): Promise<InventoryModel | ErrorHandlingMessage> {
         try {
             const data = await this.model.findById(id);
@@ -91,6 +112,6 @@ export class InventoryService {
     }
 
     async findByProductOption(product_option_id: string): Promise<InventoryModel[]>{
-        return this.model.find({product_option_id, purchase_status: 'Recieve'});
+        return this.model.find({product_option_id, purchase_status: 'Receive'});
     }
 }

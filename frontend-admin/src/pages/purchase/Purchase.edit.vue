@@ -17,7 +17,7 @@
                   <div class="row">
                     <strong>{{selected_purchase.supplier.name}}</strong>
                     <q-popup-edit
-                      @save=""
+                      @save="updatePurchaseData(selected_purchase._id, 'supplier_id', selected_purchase.supplier._id)"
                       v-model="selected_purchase.supplier.name"
                     >
                       <search-select
@@ -58,7 +58,7 @@
                   <div class="row">
                     <strong>{{new Date(selected_purchase.purchase_date).toLocaleDateString()}}</strong>
                     <q-popup-edit
-                      @save=""
+                      @save="updatePurchaseData(selected_purchase._id, 'purchase_date', selected_purchase.purchase_date)"
                       v-model="selected_purchase.purchase_date"
                     >
                       <date-picker
@@ -74,7 +74,7 @@
                   <div class="row">
                     <strong>{{ selected_purchase.purchase_status }}</strong>
                     <q-popup-edit
-                      @save=""
+                      @save="updatePurchaseStatus(selected_purchase._id, 'purchase_status', selected_purchase.purchase_status)"
                       v-model="selected_purchase.purchase_status"
                     >
                       <q-select
@@ -241,6 +241,7 @@ import {supplier_graphql} from "pages/purchase/view/graphql/supplier.graphql";
 import {filter_product_option_graphql} from "pages/setting/product/view/graphql/product-option.graphql";
 import {updatePurchase} from "pages/purchase/store/purchase.store";
 import {selected_purchase} from "pages/purchase/store/purchase.store"
+import {updateInventory} from "pages/purchase/view/store/inventory.store";
 
 export default {
   name: "Purchase.edit",
@@ -302,7 +303,12 @@ export default {
         tax: m.tax,
       }
     });
+    const updatePurchaseStatus = ((id: string, key: string, value: string) => {
+      updatePurchaseData(id, key, value);
+      updateInventoryData(id, key, value);
+    })
     const {updatePurchaseData} = updatePurchase(props, context);
+    const {updateInventoryData} = updateInventory(props, context);
 
     const amount = computed(() => {
       if (create_inventory_input.value) {
@@ -343,7 +349,8 @@ export default {
       due_amount,
       amount,
       updatePurchaseData,
-      selected_purchase
+      selected_purchase,
+      updatePurchaseStatus,
     }
   }
 }
