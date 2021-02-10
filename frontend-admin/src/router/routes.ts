@@ -18,6 +18,10 @@ const routes: RouteConfig[] = [
             path: '/',
             meta: 'settings',
             component: () => import('pages/setting/product/Product.index.vue')
+          },{
+            path: '/settings/customer',
+            meta: 'settings',
+            component: () => import('pages/setting/customer/Customer.index.vue')
           },
         ]
       },
