@@ -27,10 +27,10 @@ function onSuccess(_data: any, context: any) {
   }
 }
 
-export const selected_product = ref({}) as any;
+export const selected_customer = ref({}) as any;
 /*** CRUD Action ***/
 
-/*/!*CREATE*!/
+/*CREATE*/
 export function createCustomer(prop: any, context: any) {
   //--variables--//
   const create_data = ref<CustomerModel>({} as CustomerModel);
@@ -72,7 +72,7 @@ export function createCustomer(prop: any, context: any) {
     createCustomerData,
     mapped
   }
-}*/
+}
 
 //---R-E-A-D---//
 export const readCustomer = (table: any) => {
@@ -107,7 +107,7 @@ export const readCustomer = (table: any) => {
   //set selected value
   watch(grid_data.value, (value: any) => {
     if (value.selected.length) {
-      selected_product.value = JSON.parse(JSON.stringify(value.selected[0]))
+      selected_customer.value = JSON.parse(JSON.stringify(value.selected[0]))
     }
   })
   //functions
@@ -153,7 +153,7 @@ export const readCustomer = (table: any) => {
   }
 };
 
-/*/!*UPDATE*!/
+/*UPDATE*/
 export function updateCustomer(prop: any, context: any) {
   //--variables--//
   const update_data = ref<CustomerModel>({} as CustomerModel);
@@ -194,7 +194,7 @@ export function updateCustomer(prop: any, context: any) {
   }
 }
 
-/!*DELETE*!/
+/*DELETE*/
 export function deleteCustomer(prop: any, context: any, table: any) {
   //--variables--//
   const id = ref("");
@@ -231,4 +231,4 @@ export function deleteCustomer(prop: any, context: any, table: any) {
   return {
     removeData
   }
-}*/
+}

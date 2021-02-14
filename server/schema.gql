@@ -310,9 +310,10 @@ type CustomerType {
   success: Boolean
   message: String
   _id: ID
-  customer_name: String
+  business_name: String
   contact_lastname: String
   contact_firstname: String
+  date_of_birth: String
   phone: String
   email: String
   address1: String
@@ -573,9 +574,10 @@ input UpdateSupplierInput {
 }
 
 input CreateCustomerInput {
-  customer_name: String
+  business_name: String
   contact_lastname: String
   contact_firstname: String
+  date_of_birth: String
   phone: String
   email: String
   address1: String
@@ -584,9 +586,10 @@ input CreateCustomerInput {
 }
 
 input UpdateCustomerInput {
-  customer_name: String
+  business_name: String
   contact_lastname: String
   contact_firstname: String
+  date_of_birth: String
   phone: String
   email: String
   address1: String

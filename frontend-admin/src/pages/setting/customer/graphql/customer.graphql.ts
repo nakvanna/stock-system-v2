@@ -12,9 +12,10 @@ export const customer_graphql = gql`
         cursor
         node {
           _id
-          customer_name
+          business_name
           contact_firstname
           contact_lastname
+          date_of_birth
           phone
           email
           address1
@@ -41,9 +42,10 @@ export const filter_customer_graphql = gql`
         cursor
         node {
           _id
-          customer_name
+          business_name
           contact_firstname
           contact_lastname
+          date_of_birth
           phone
           email
           address1

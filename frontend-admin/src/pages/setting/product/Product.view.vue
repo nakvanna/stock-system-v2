@@ -1,7 +1,7 @@
 <template>
   <q-page v-if="JSON.stringify(selected_product) !== '{}'">
     <div class="row q-pa-sm q-gutter-lg">
-      <span class="text-h6 text-bold">បន្ថែមទំនិញថ្មី</span>
+      <span class="text-h6 text-bold">បង្ហាញទំនិញ</span>
       <q-space/>
       <q-btn outline to="/settings" icon="fas fa-arrow-alt-circle-left"/>
     </div>

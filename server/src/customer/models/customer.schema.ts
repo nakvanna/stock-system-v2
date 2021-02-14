@@ -2,9 +2,10 @@ import * as mongoose from 'mongoose';
 
 export const CustomerSchema = new mongoose.Schema(
   {
-      customer_name: { type: String, required: true },
+      business_name: { type: String, required: true },
       contact_lastname: { type: String, required: true },
       contact_firstname: { type: String, required: true },
+      date_of_birth: { type: String, required: true },
       phone: { type: String, required: true },
       email: { type: String, required: true },
       address1: { type: String, required: true },
@@ -14,4 +15,4 @@ export const CustomerSchema = new mongoose.Schema(
   { timestamps: true },
 );
 // Create index to check duplicate one or multi field.
-CustomerSchema.index({ customer_name: 1 }, { unique: true });
+CustomerSchema.index({ business_name: 1 }, { unique: true });

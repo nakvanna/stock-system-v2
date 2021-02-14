@@ -29,11 +29,20 @@ const routes: RouteConfig[] = [
         path: '/settings/products/new',
         meta: 'settings',
         component: () => import('pages/setting/product/Product.create.vue')
+      },{
+        path: '/settings/customer/new',
+        meta: 'settings',
+        component: () => import('pages/setting/customer/Customer.create.vue')
       },
       {
-        path: '/settings/products/view',
+        path: '/settings/product/view',
         meta: 'settings',
         component: () => import('pages/setting/product/Product.view.vue')
+      },
+      {
+        path: '/settings/customer/view',
+        meta: 'settings',
+        component: () => import('pages/setting/customer/Customer.view.vue')
       },
       {
         path: '/other-settings', meta: 'settings', component: () => import('pages/setting/SubSetting.index.vue'),
