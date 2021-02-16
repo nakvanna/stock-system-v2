@@ -9,5 +9,4 @@ export interface InventoryModel {
   discount: number;
   tax: number;
   status: boolean;
-
 }

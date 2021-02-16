@@ -338,6 +338,39 @@ type CustomerCursorPagination {
   pageInfo: CustomerTypePageInfo
 }
 
+type SellType {
+  createdAt: DateTime
+  updatedAt: DateTime
+  success: Boolean
+  message: String
+  _id: ID
+  customer_id: String
+  sell_date: DateTime
+  sell_status: String
+  amount: Float
+  paid_amount: Float
+  due_amount: Float
+  description: String
+  status: Boolean
+}
+
+type SellTypeEdge {
+  cursor: String
+  node: SellType
+}
+
+type SellTypePageInfo {
+  hasNextPage: Boolean
+  endCursor: String
+}
+
+type SellCursorPagination {
+  edges: [SellTypeEdge!]
+  nodes: [SellType!]
+  totalCount: Int
+  pageInfo: SellTypePageInfo
+}
+
 type Query {
   brands(options: InputCursorPaginationOption!): BrandCursorPagination!
   brand(id: ID!): BrandType!
@@ -359,6 +392,8 @@ type Query {
   supplier(id: ID!): SupplierType!
   customers(options: InputCursorPaginationOption!): CustomerCursorPagination!
   customer(id: ID!): CustomerType!
+  sells(options: InputCursorPaginationOption!): SellCursorPagination!
+  sell(id: ID!): SellType!
 }
 
 input InputCursorPaginationOption {
@@ -393,9 +428,11 @@ type Mutation {
   updateProductOption(update_input: UpdateProductOptionInput!, id: String!): ProductOptionType!
   removeProductOption(id: String!): ProductOptionType!
   createInventory(create_input: CreateInventoryInput!): InventoryType!
+  createInventories(create_input: CreateInventoriesInput!): InventoryType!
   updateInventory(update_input: UpdateInventoryInput!, id: String!): InventoryType!
   updateInventoryPurchaseStatus(update_input: UpdateInventoryInput!, purchase_id: String!): InventoryType!
   removeInventory(id: String!): InventoryType!
+  removeInventories(purchase_id: String!): InventoryType!
   createPurchase(create_input: CreatePurchaseInput!): PurchaseType!
   updatePurchase(update_input: UpdatePurchaseInput!, id: String!): PurchaseType!
   removePurchase(id: String!): PurchaseType!
@@ -405,6 +442,9 @@ type Mutation {
   createCustomer(create_input: CreateCustomerInput!): CustomerType!
   updateCustomer(update_input: UpdateCustomerInput!, id: String!): CustomerType!
   removeCustomer(id: String!): CustomerType!
+  createSell(create_input: CreateSellInput!): SellType!
+  updateSell(update_input: UpdateSellInput!, id: String!): SellType!
+  removeSell(id: String!): SellType!
 }
 
 input CreateBrandInput {
@@ -520,6 +560,10 @@ input CreateInventoryInput {
   buy_price: Float
 }
 
+input CreateInventoriesInput {
+  multiple: [CreateInventoryInput!]!
+}
+
 input UpdateInventoryInput {
   purchase_id: String
   product_option_id: String
@@ -594,5 +638,26 @@ input UpdateCustomerInput {
   email: String
   address1: String
   address2: String
+  status: Boolean
+}
+
+input CreateSellInput {
+  customer_id: String
+  sell_date: DateTime
+  sell_status: String
+  amount: Float
+  paid_amount: Float
+  due_amount: Float
+  description: String
+}
+
+input UpdateSellInput {
+  customer_id: String
+  sell_date: DateTime
+  sell_status: String
+  amount: Float
+  paid_amount: Float
+  due_amount: Float
+  description: String
   status: Boolean
 }

@@ -110,7 +110,7 @@
               <search-select
                 dense class="q-pb-xs"
                 outlined
-                label="ប្រភេទ"
+                label="ជ្រើសរើសទំនិរួម"
                 hint="ជ្រើសរើសទំនិញ"
                 option_label="title"
                 :query="query.product_option"
@@ -193,6 +193,7 @@
                label="រក្សាទុក"/>
       </div>
     </q-form>
+    {{mapped}}
   </q-page>
 </template>
 
@@ -256,7 +257,7 @@ export default defineComponent({
       product_option: product_option_from_product
     });
 
-    const {create_data, createPurchaseData} = createPurchase(props, context);
+    const {create_data, createPurchaseData, mapped} = createPurchase(props, context);
 
     const amount = computed(()=> {
       if (create_data.value.create_inventory_input){
@@ -275,7 +276,6 @@ export default defineComponent({
     });
 
     const inputSelect = ((data: any) => {
-      console.log(data.title)
       for (let i = 0; i < data.product_option.length; i ++){
         const exist = create_data.value.create_inventory_input.some((s: any) => s.sku === data.product_option[i].sku);
         if ( !exist ){
@@ -299,6 +299,7 @@ export default defineComponent({
       inputSelect,
       columns,
       amount,
+      mapped,
       removeProductOption
     }
   }

@@ -1,6 +1,7 @@
 <template>
   <q-page class="q-pa-md">
-    <q-form>
+    {{ selected_purchase._id }}
+    <q-form @submit="updatePurchaseInventory(selected_purchase._id)">
       <div class="row q-pa-md q-gutter-lg">
         <span class="text-h6 text-bold">កែប្រែទំនិញថ្មី</span>
         <q-space/>
@@ -92,10 +93,11 @@
                 <div class="row">
                   <strong v-html="selected_purchase.description" />
                   <q-popup-edit
-                    @save=""
+                    @save="updatePurchaseData(selected_purchase._id, 'description', selected_purchase.description)" buttons label-set="រក្សាទុក" label-cancel="ត្រឡប់"
                     v-model="selected_purchase.description"
                   >
                     <q-editor
+                      @keyup.stop
                       v-model="selected_purchase.description"
                       class="full-width" :toolbar="[
                   [
@@ -134,7 +136,10 @@
               <div class="row">
                 <div class="text-primary text-h6 col-6 q-pr-xs">
                   <strong>ចំណាយ</strong> ${{ selected_purchase.paid_amount.toFixed(2) }}
-                  <q-popup-edit v-model.number="selected_purchase.paid_amount">
+                  <q-popup-edit
+                    @save="updatePurchaseData(selected_purchase._id, 'paid_amount', selected_purchase.paid_amount)"
+                    v-model.number="selected_purchase.paid_amount"
+                  >
                     <q-input prefix="$" type="number" v-model.number="selected_purchase.paid_amount" dense autofocus />
                   </q-popup-edit>
                 </div>
@@ -153,7 +158,7 @@
               <search-select
                 dense class="q-pb-xs"
                 outlined
-                label="ប្រភេទ"
+                label="ជ្រើសរើសទំនិញរាយ"
                 hint="ជ្រើសរើសទំនិញ"
                 option_label="sku"
                 :query="query.product_option"
@@ -184,7 +189,7 @@
               </search-select>
               <div>
                 <q-table
-                  :data="create_inventory_input"
+                  :data="create_data"
                   :columns="columns"
                   row-key="sku"
                   :rows-per-page-options="[0]"
@@ -195,7 +200,7 @@
                         <q-btn @click="removeProductOption(props.pageIndex)" outline dense round color="negative" icon="clear" />
                       </q-td>
                       <q-td key="product" :props="props">
-                        {{ props.row.product.title }} - ({{props.row.sku}})
+                        {{ props.row.title }} - ({{props.row.sku}})
                       </q-td>
                       <q-td key="purchase_qty" :props="props">
                         <q-input v-model.number="props.row.purchase_qty" type="number" />
@@ -219,7 +224,7 @@
                         }}
                       </q-td>
                       <q-td key="sell_price" :props="props">
-                        <q-input v-model.number="props.row.price" prefix="$"/>
+                        <q-input v-model.number="props.row.sale_price" prefix="$"/>
                       </q-td>
                     </q-tr>
                   </template>
@@ -229,26 +234,37 @@
           </q-card>
         </div>
       </div>
+      <q-separator/>
+      <div class="q-pb-lg q-px-lg row q-mt-md">
+        <q-space/>
+        <q-btn
+          rounded flat class="bg-blue-1"
+          color="primary" type="submit"
+          label="រក្សាទុក"
+        />
+      </div>
     </q-form>
+<!--    {{ create_data }}-->
+    {{ mapped }}
   </q-page>
 </template>
 
 <script lang="ts">
-import {computed, reactive, ref, watch} from "@vue/composition-api";
+import {computed, reactive, ref} from "@vue/composition-api";
 import SearchSelect from "components/SearchSelect.vue";
 import DatePicker from "components/DatePicker.vue";
 import {supplier_graphql} from "pages/purchase/view/graphql/supplier.graphql";
 import {filter_product_option_graphql} from "pages/setting/product/view/graphql/product-option.graphql";
 import {updatePurchase} from "pages/purchase/store/purchase.store";
 import {selected_purchase} from "pages/purchase/store/purchase.store"
-import {updateInventory} from "pages/purchase/view/store/inventory.store";
+import {createInventories, deleteInventories, updateInventory} from "pages/purchase/view/store/inventory.store";
 
 export default {
   name: "Purchase.edit",
   components: {DatePicker, SearchSelect},
   setup: function (props: any, context: any) {
     const purchase_data = ref<any>({});
-    const create_inventory_input = ref([]);
+    const create_inventory_input = ref<any>([]);
     const columns = ref([
       {
         align: 'left',
@@ -288,59 +304,73 @@ export default {
       product_option: filter_product_option_graphql,
     });
 
-    create_inventory_input.value = selected_purchase.value.inventory.map((m: any) => {
-      return {
-        id: m._id,
-        sku: m.product_option.sku,
-        buy_price: m.buy_price,
-        price: m.product_option.price,
-        option1: m.product_option.option1,
-        option2: m.product_option.option2,
-        option3: m.product_option.option3,
-        product: { _id: m.product_option.product._id, title: m.product_option.product.title },
-        purchase_qty: m.purchase_qty,
-        discount: m.discount,
-        tax: m.tax,
-      }
-    });
     const updatePurchaseStatus = ((id: string, key: string, value: string) => {
       updatePurchaseData(id, key, value);
       updateInventoryData(id, key, value);
     })
     const {updatePurchaseData} = updatePurchase(props, context);
     const {updateInventoryData} = updateInventory(props, context);
-
+    const {removeInventoriesData} = deleteInventories(props, context);
+    const {create_data, mapped, createInventoriesData} = createInventories(props, context);
+    create_data.value = selected_purchase.value.inventory.map((m: any) => {
+      return {
+        purchase_id: selected_purchase.value._id,
+        purchase_status: selected_purchase.value.purchase_status,
+        product_option_id: m.product_option._id,
+        sku: m.product_option.sku,
+        buy_price: m.buy_price,
+        sale_price: m.product_option.price,
+        title: m.product_option.product.title,
+        purchase_qty: m.purchase_qty,
+        discount: m.discount,
+        tax: m.tax,
+      }
+    });
     const amount = computed(() => {
-      if (create_inventory_input.value) {
-        return create_inventory_input.value.map((m: any) => {
+      if (create_data.value) {
+        return create_data.value.map((m: any) => {
           return (m.purchase_qty * m.buy_price) - ((m.purchase_qty * m.buy_price * m.discount) / 100) + ((m.purchase_qty * m.buy_price * m.tax) / 100)
         }).reduce((a: number, b: number) => a + b, 0)
       }
     });
 
     const due_amount = computed(() => {
-      if (create_inventory_input.value) {
+      if (create_data.value) {
         return selected_purchase.value.amount - selected_purchase.value.paid_amount;
       }
     });
 
     const removeProductOption = ((index: any) => {
-      create_inventory_input.value.splice(index, 1)
+      create_data.value.splice(index, 1)
     });
 
     const inputSelect = ((data: any) => {
-      const exist = create_inventory_input.value.some((s: any) => s.sku === data.sku);
+      const exist = create_data.value.some((s: any) => s.sku === data.sku);
       if (!exist) {
         delete data.product_id;
-        create_inventory_input.value.push({
-          ...data, // @ts-ignore
-          purchase_qty: 1, buy_price: 0, discount: 0, tax: 0,
+        create_data.value.push({
+          purchase_id: selected_purchase.value._id,
+          purchase_status: selected_purchase.value.purchase_status,
+          product_option_id: data._id,
+          title: data.product.title,
+          sku: data.sku,
+          sale_price: data.price,
+          purchase_qty: 1,
+          buy_price: 0,
+          discount: 0,
+          tax: 0,
         });
       }
     });
 
+    const updatePurchaseInventory = ((id: any) => {
+      removeInventoriesData(id).then(() => {
+        createInventoriesData();
+      });
+    })
+
     return {
-      create_inventory_input,
+      create_data,
       columns,
       query,
       purchase_data,
@@ -351,6 +381,8 @@ export default {
       updatePurchaseData,
       selected_purchase,
       updatePurchaseStatus,
+      updatePurchaseInventory,
+      mapped
     }
   }
 }

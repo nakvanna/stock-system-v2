@@ -1,8 +1,8 @@
 import {Args, ID, Mutation, Query, ResolveField, Resolver, Parent} from '@nestjs/graphql';
 import {InputCursorPaginationOption} from 'shared/cursor-pagination';
-import { InventoryType, InventoryCursorPagination } from './dto/inventory.dto';
+import {InventoryType, InventoryCursorPagination} from './dto/inventory.dto';
 import {InventoryService} from "./inventory.service";
-import {CreateInventoryInput} from "./input/create-inventory.input";
+import {CreateInventoryInput, CreateInventoriesInput} from "./input/create-inventory.input";
 import { UpdateInventoryInput } from './input/update-inventory.input';
 import {ProductOptionType} from "../product-option/dto/product-option.dto";
 import {InventoryModel} from "./models/inventory.model";
@@ -19,6 +19,24 @@ export class InventoryResolver {
     @Mutation(() => InventoryType)
     createInventory(@Args('create_input') create_input: CreateInventoryInput) {
         return this.service.create(create_input);
+    }
+
+    @Mutation(() => InventoryType)
+    async createInventories(@Args('create_input') create_input: CreateInventoriesInput) {
+        let pre_res: any = {};
+        for (const inputElement of create_input.multiple) {
+            console.log(inputElement)
+            pre_res = await this.service.create(inputElement);
+        }
+        const data: any = {}
+        if (pre_res.success) {
+            data.message = 'បានរក្សាទុក'
+            data.success = true
+            return data
+        }
+        data.message = 'ទិន្នន័យជាន់គ្នា'
+        data.success = false
+        return data
     }
 
     @Query(() => InventoryCursorPagination, {name: 'inventories'})
@@ -50,6 +68,12 @@ export class InventoryResolver {
     @Mutation(() => InventoryType)
     removeInventory(@Args('id') id: string) {
         return this.service.remove(id);
+    }
+
+    @Mutation(() => InventoryType)
+    removeInventories(@Args('purchase_id') purchase_id: string) {
+        console.log(purchase_id)
+        return this.service.removeAll(purchase_id);
     }
 
     @ResolveField(() => ProductOptionType)

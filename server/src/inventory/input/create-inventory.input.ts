@@ -19,3 +19,9 @@ export class CreateInventoryInput {
     @Field({nullable: true})
     buy_price: number;
 }
+
+@InputType()
+export class CreateInventoriesInput {
+    @Field(() => [CreateInventoryInput])
+    multiple?: any;
+}

@@ -34,7 +34,7 @@
                   <q-popup-edit
                     @save="updateProductData(selected_product._id, 'description', selected_product.description)"
                     v-model="selected_product.description" buttons
-                    label-set="save"
+                    label-set="រក្សាទុក" label-cancel="ត្រឡប់"
                   >
                     <q-editor
                       v-model="selected_product.description"
