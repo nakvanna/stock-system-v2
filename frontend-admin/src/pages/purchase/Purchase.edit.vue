@@ -1,6 +1,5 @@
 <template>
   <q-page class="q-pa-md">
-    {{ selected_purchase._id }}
     <q-form @submit="updatePurchaseInventory(selected_purchase._id)">
       <div class="row q-pa-md q-gutter-lg">
         <span class="text-h6 text-bold">កែប្រែទំនិញថ្មី</span>
@@ -137,7 +136,7 @@
                 <div class="text-primary text-h6 col-6 q-pr-xs">
                   <strong>ចំណាយ</strong> ${{ selected_purchase.paid_amount.toFixed(2) }}
                   <q-popup-edit
-                    @save="updatePurchaseData(selected_purchase._id, 'paid_amount', selected_purchase.paid_amount)"
+                    @save="whilePaidAmountUpdate(selected_purchase._id)"
                     v-model.number="selected_purchase.paid_amount"
                   >
                     <q-input prefix="$" type="number" v-model.number="selected_purchase.paid_amount" dense autofocus />
@@ -244,8 +243,6 @@
         />
       </div>
     </q-form>
-<!--    {{ create_data }}-->
-    {{ mapped }}
   </q-page>
 </template>
 
@@ -311,7 +308,7 @@ export default {
     const {updatePurchaseData} = updatePurchase(props, context);
     const {updateInventoryData} = updateInventory(props, context);
     const {removeInventoriesData} = deleteInventories(props, context);
-    const {create_data, mapped, createInventoriesData} = createInventories(props, context);
+    const {create_data, createInventoriesData} = createInventories(props, context);
     create_data.value = selected_purchase.value.inventory.map((m: any) => {
       return {
         purchase_id: selected_purchase.value._id,
@@ -363,11 +360,18 @@ export default {
       }
     });
 
-    const updatePurchaseInventory = ((id: any) => {
-      removeInventoriesData(id).then(() => {
-        createInventoriesData();
+    const updatePurchaseInventory = ((id: string) => {
+      removeInventoriesData(id).then(async () => {
+        await updatePurchaseData(id, 'due_amount', due_amount.value);
+        await updatePurchaseData(id, 'amount', amount.value);
+        await createInventoriesData();
       });
-    })
+    });
+
+    const whilePaidAmountUpdate = (async (id: string) => {
+      await updatePurchaseData(id, 'paid_amount', selected_purchase.value.paid_amount)
+      await updatePurchaseData(id, 'due_amount', due_amount.value);
+    });
 
     return {
       create_data,
@@ -382,7 +386,7 @@ export default {
       selected_purchase,
       updatePurchaseStatus,
       updatePurchaseInventory,
-      mapped
+      whilePaidAmountUpdate
     }
   }
 }

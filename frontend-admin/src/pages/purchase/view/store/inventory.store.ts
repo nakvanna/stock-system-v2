@@ -69,7 +69,6 @@ export function createInventories(prop: any, context: any) {
   return {
     create_data,
     createInventoriesData,
-    mapped
   }
 }
 
