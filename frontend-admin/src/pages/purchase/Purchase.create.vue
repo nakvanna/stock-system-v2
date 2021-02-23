@@ -1,7 +1,7 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="q-pa-xs">
     <q-form @submit="createPurchaseData">
-      <div class="row q-pa-md q-gutter-lg">
+      <div class="row q-pa-xs q-gutter-lg">
         <span class="text-h6 text-bold">បន្ថែមទំនិញថ្មី</span>
         <q-space/>
         <q-btn outline to="/purchases" icon="fas fa-arrow-alt-circle-left"/>
@@ -193,22 +193,13 @@
                label="រក្សាទុក"/>
       </div>
     </q-form>
-    {{mapped}}
   </q-page>
 </template>
 
 <script lang="ts">
 import {computed, defineComponent, reactive, ref, watch} from "@vue/composition-api";
-import {createBrand} from "pages/brand/store/brand.store";
-import {createGlobal} from "pages/global.store";
-import {create_brand_graphql} from "pages/brand/graphql/create-brand.graphql";
-import {BrandModel} from "pages/brand/model/brand.model";
 import SearchSelect from "components/SearchSelect.vue";
 import { createPurchase } from "./store/purchase.store";
-import {category_graphql} from "pages/setting/sub-setting/category/graphql/category.graphql";
-import {filter_sub_categories_graphql} from "pages/setting/sub-setting/sub-category/graphql/sub-category.graphql";
-import {brand_graphql} from "pages/setting/sub-setting/brand/graphql/brand.graphql";
-import {filter_product_option_graphql} from "pages/setting/product/view/graphql/product-option.graphql";
 import {supplier_graphql} from "pages/purchase/view/graphql/supplier.graphql";
 import DatePicker from "components/DatePicker.vue";
 import {product_option_from_product} from "pages/setting/product/graphql/product.graphql";

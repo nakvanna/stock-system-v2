@@ -138,6 +138,7 @@ export default {
       emit('update:record_value', {total_item: data?.length, total_record: total_record.value + 1})
       return data
     });
+
     return {
       //ref or reactive
       grid,

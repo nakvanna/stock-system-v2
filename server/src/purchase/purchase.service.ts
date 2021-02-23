@@ -86,7 +86,4 @@ export class PurchaseService {
         }
     }
 
-    async findByParent(_id: string): Promise<PurchaseModel> {
-        return this.model.findOne({_id})
-    }
 }

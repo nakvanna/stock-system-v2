@@ -6,11 +6,16 @@ const routes: RouteConfig[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {path: '', component: () => import('pages/Index.vue')},
-      {path: '/brands', component: () => import('pages/brand/Brand.index.vue')},
+      //Purchases route
       {path: '/purchases', meta: 'purchases', component: () => import('pages/purchase/Purchase.index.vue')},
       {path: '/purchase/new', meta: 'purchases', component: () => import('pages/purchase/Purchase.create.vue')},
       {path: '/purchase/edit', meta: 'purchases', component: () => import('pages/purchase/Purchase.edit.vue')},
       {path: '/purchase/view/:id', meta: 'purchases', component: () => import('pages/purchase/Purchase.view.vue')},
+      {path: '/purchase/payback/:id', meta: 'purchases', component: () => import('pages/purchase-payback/PurchasePayback.create.vue')},
+      {path: '/purchase/view/payback/:id', meta: 'purchases', component: () => import('pages/purchase-payback/PurchasePayback.index.vue')},
+      //Sale route
+      {path: '/sales', meta: 'sales', component: () => import('pages/sale/Sale.index.vue')},
+      {path: '/sale/new', meta: 'sales', component: () => import('pages/sale/Sale.create.vue')},
       {
         path: '/settings', component: () => import('pages/setting/Setting.index.vue'),
         children: [

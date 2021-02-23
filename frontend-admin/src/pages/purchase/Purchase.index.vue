@@ -1,6 +1,5 @@
 <template>
   <q-page>
-<!--    {{grid_data.selected}}-->
     <div class="row bg-grey-2 q-pa-xs">
       <div class="flex q-gutter-xs full-width">
         <q-btn
@@ -10,30 +9,58 @@
           icon="sync"
           @click="table.refetch()"
         />
-        <q-btn-dropdown
-          :disable="grid_data.selected.length!==1"
-          dense size="12px" icon="list_alt"
-          flat round color="primary"
-        >
-          <q-list>
-            <q-item clickable v-close-popup dense :to="grid_data.selected.length === 1 ? '/purchase/view/'+grid_data.selected[0]._id: null" >
-              <q-item-section side>
-                <q-icon name="preview" color="blue-5" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>បង្ហាញ</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup dense to="/purchase/edit/" >
-              <q-item-section side>
-                <q-icon name="edit" color="blue-5" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>កែប្រែ</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
+        <div class="q-pt-xs">
+          <q-btn-dropdown
+            :disable="grid_data.selected.length!==1"
+            dense size="12px" icon="list_alt"
+            flat round color="primary"
+          >
+            <q-list>
+              <q-item clickable v-close-popup dense :to="grid_data.selected.length === 1 ? '/purchase/view/'+grid_data.selected[0]._id: null" >
+                <q-item-section side>
+                  <q-icon name="preview" color="blue-5" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>បង្ហាញ</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup dense to="/purchase/edit/" >
+                <q-item-section side>
+                  <q-icon name="edit" color="blue-5" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>កែប្រែ</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </div>
+        <div class="q-pt-xs" v-if="grid_data.selected">
+          <q-btn-dropdown
+            :disable="grid_data.selected.length!==1"
+            dense size="12px" icon="bookmarks"
+            flat round color="primary"
+          >
+            <q-list>
+              <q-item clickable v-close-popup dense :to="grid_data.selected.length === 1 ? '/purchase/view/payback/'+grid_data.selected[0]._id: null" >
+                <q-item-section side>
+                  <q-icon name="preview" color="blue-5" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>ប្រវត្តិសង</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup dense :to="grid_data.selected.length === 1 ? '/purchase/payback/'+grid_data.selected[0]._id: null" >
+                <q-item-section side>
+                  <q-icon name="money" color="blue-5" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>សងត្រឡប់</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </div>
         <q-btn flat round size="12px" icon="add" to="/purchase/new"/>
         <div class="q-pt-sm text-subtitle2 text-secondary">
           ទិន្នន័យសរុប {{ grid_data.record_value.total_record - 1 }} ទិន្នន័យបានទាញយក

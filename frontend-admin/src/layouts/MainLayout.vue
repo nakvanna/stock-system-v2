@@ -97,15 +97,15 @@ export default defineComponent({
         label: 'ផ្ទាំងដើម',
         mini_label: 'ផ្ទាំងដើម'
       },{
-        to: '/brands',
-        icon: 'fas fa-home',
-        label: 'មូដទំនិញ',
-        mini_label: 'មូដទំនិញ'
-      },{
         to: '/purchases',
-        icon: 'fas fa-home',
+        icon: 'fas fa-store-alt',
         label: 'ទិញទំនិញ',
         mini_label: 'ទិញទំនិញ'
+      },{
+        to: '/sales',
+        icon: 'fas fa-shopping-cart',
+        label: 'លក់ទំនិញ',
+        mini_label: 'លក់ទំនិញ'
       },{
         to: '/settings',
         icon: 'fas fa-cog',

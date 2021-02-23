@@ -9,6 +9,8 @@ import {SupplierType} from "../supplier/dto/supplier.dto";
 import {PurchaseModel} from "./models/purchase.model";
 import {SupplierService} from "../supplier/supplier.service";
 import {InventoryType} from "../inventory/dto/inventory.dto";
+import {PurchasePaybackType} from "../purchase-payback/dto/purchase-payback.dto";
+import {PurchasePaybackService} from "../purchase-payback/purchase-payback.service";
 
 @Resolver(() => PurchaseType)
 export class PurchaseResolver {
@@ -16,6 +18,7 @@ export class PurchaseResolver {
         private readonly service: PurchaseService,
         private readonly inventoryService: InventoryService,
         private readonly supplierService: SupplierService,
+        private readonly purchasePaybackService: PurchasePaybackService,
     ) {
     }
 
@@ -63,5 +66,9 @@ export class PurchaseResolver {
     @ResolveField(() => InventoryType)
     inventory(@Parent() purchase: PurchaseModel){
         return this.inventoryService.findByPurchase(purchase._id)
+    }
+    @ResolveField(() => PurchasePaybackType)
+    purchase_payback(@Parent() purchase: PurchaseModel){
+        return this.purchasePaybackService.findByPurchase(purchase._id)
     }
 }

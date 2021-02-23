@@ -3,6 +3,7 @@ import {CursorPagination} from '../../../shared/cursor-pagination';
 import {ErrorHandlingType} from '../../../shared/utils';
 import {SupplierType} from "../../supplier/dto/supplier.dto";
 import {InventoryType} from "../../inventory/dto/inventory.dto";
+import {PurchasePaybackType} from "../../purchase-payback/dto/purchase-payback.dto";
 
 @ObjectType()
 export class PurchaseType extends PartialType(ErrorHandlingType) {
@@ -28,6 +29,8 @@ export class PurchaseType extends PartialType(ErrorHandlingType) {
     supplier: string;
     @Field(() => [InventoryType])
     inventory: string[];
+    @Field(() => [PurchasePaybackType])
+    purchase_payback: string[];
 }
 
 @ObjectType()

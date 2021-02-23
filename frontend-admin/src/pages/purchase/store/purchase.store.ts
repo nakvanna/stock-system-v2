@@ -137,11 +137,13 @@ export const readPurchase = (table: any) => {
   //functions
   const showAll = () => table?.value?.filterTable(filter.value, 0, false);
   const mapPurchase = (x: any) => {
+    const amount = x.node.due_amount;
+    const payback = x.node.purchase_payback.map((m: any) => m.payback).reduce((a: number, b: number) => a + b, 0)
     return {
       ...x.node,
       amount_index: `$${x.node.amount.toFixed(2)}`,
       paid_amount_index: `$${x.node.paid_amount.toFixed(2)}`,
-      due_amount_index: `$${x.node.due_amount.toFixed(2)}`,
+      due_amount_index: "$" + amount + " - " + "$" + payback + " = " + "$"+(amount - payback),
       supplier_name: x.node.supplier.name,
       purchase_date: x.node.purchase_date,
       createdAt: x.node.createdAt,

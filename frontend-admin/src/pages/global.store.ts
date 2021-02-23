@@ -1,6 +1,5 @@
 import { useMutation } from "@vue/apollo-composable";
 import {reactive} from "@vue/composition-api";
-import {brand_graphql} from "pages/brand/graphql/brand.graphql";
 
 //--OnDone message--//
 function onSuccess(_data: any, context: any) {
@@ -61,7 +60,7 @@ export const readGlobal = (table: any) => {
         align: "left"
       }
     ],
-    query: brand_graphql
+    // query: brand_graphql
   });
   //--end-variables--//
 
