@@ -87,7 +87,7 @@ export class CustomerService {
     }
   }
 
-  // async findByParent(_id: string): Promise<CustomerModel> {
-  //   return this.model.findOne({_id})
-  // }
+  async findBySale(_id: string): Promise<CustomerModel> {
+    return this.model.findOne({_id})
+  }
 }

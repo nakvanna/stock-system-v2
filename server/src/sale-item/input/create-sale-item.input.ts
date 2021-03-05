@@ -19,7 +19,7 @@ export class CreateSaleItemInput {
 }
 
 @InputType()
-export class CreateInventoriesInput {
+export class CreateSaleItemsInput {
     @Field(() => [CreateSaleItemInput])
     multiple?: any;
 }

@@ -2,9 +2,9 @@ import {computed, ref, watch} from "@vue/composition-api";
 import {useMutation} from "@vue/apollo-composable";
 import {PurchaseModel} from "pages/purchase/model/purchase.model";
 import {remove_purchase_graphql} from "pages/purchase/graphql/remove-purchase.graphql";
-import {create_purchase_graphql } from "../graphql/create-purchase.graphql";
 import {purchase_graphql} from "pages/purchase/graphql/purchase.graphql";
 import {update_purchase_graphql } from "../graphql/update-purchase.graphql";
+import {create_purchase_graphql} from "pages/purchase/graphql/create-purchase.graphql";
 
 
 //--OnDone message--//
@@ -84,9 +84,10 @@ export function createPurchase(prop: any, context: any) {
         amount: 0,
         paid_amount: 0,
         due_amount: 0,
-        create_inventory_input: []
+        create_inventory_input: [],
+        purchase_status: 'Pending'
       };
-      context.emit('on-success')
+      context.emit('on-success');
     }
   })
   //--end-create-vue apollo--//

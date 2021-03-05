@@ -23,8 +23,8 @@ export class SaleItemType extends PartialType(ErrorHandlingType) {
     tax: number;
     @Field({nullable: true})
     status: boolean;
-    @Field(() => ProductOptionType)
-    product_option: string;
+    // @Field(() => ProductOptionType)
+    // product_option: string;
 }
 
 @ObjectType()

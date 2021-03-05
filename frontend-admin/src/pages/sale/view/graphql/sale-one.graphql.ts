@@ -1,33 +1,34 @@
 import {gql} from '@apollo/client/core';
 
-export const purchase_one_graphql = gql`
-  query purchase(
+export const sale_one_graphql = gql`
+  query sale(
     $id: ID!
   ){
-    purchase(id: $id){
+    sale(id: $id){
       _id
-      purchase_date
-      purchase_status
+      sale_date
+      sale_status
       amount
       due_amount
       paid_amount
       description
       createdAt
-      supplier{
+      customer{
         _id
-        name
-        company
+        business_name
+        contact_firstname
+        contact_lastname
         phone
         email
-        address
-        note
+        address1
+        address2
+        date_of_birth
       }
-      inventory{
+      sale_item{
         _id
-        purchase_status
-        stock_qty
-        purchase_qty
-        buy_price
+        sale_status
+        sale_qty
+        sale_price
         tax
         discount
         product_option{

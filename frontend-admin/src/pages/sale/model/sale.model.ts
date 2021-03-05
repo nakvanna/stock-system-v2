@@ -1,25 +1,24 @@
 export interface SaleModel {
   _id?: string;
-  supplier_id?: string | any;
-  purchase_date?: Date;
-  purchase_status?: string;
+  customer_id?: string | any;
+  sale_date?: Date;
+  sale_status?: string;
   amount?: number;
-  paid_amount?: number;
+  paid_amount?: number | any;
   due_amount?: number;
   description?: string;
   status?: boolean;
-  create_inventory_input?: [InventoryModel] | any;
+  create_sale_item_input?: [SaleItemModel] | any;
 
 }
 
-export interface InventoryModel {
+export interface SaleItemModel {
   _id?: string;
-  purchase_id?: string;
+  sale_id?: string;
   product_option_id?: string;
-  purchase_status?: string;
-  stock_qty?: number;
-  purchase_qty?: number;
-  buy_price?: number;
+  sale_status?: string;
+  sale_qty?: number;
+  sale_price?: number;
   discount: 0;
   tax: 0;
   status?: boolean;

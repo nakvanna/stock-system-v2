@@ -1,6 +1,7 @@
 import {Field, ID, ObjectType, PartialType} from '@nestjs/graphql';
 import {CursorPagination} from '../../../shared/cursor-pagination';
 import {ErrorHandlingType} from '../../../shared/utils';
+import {SaleItemType} from "../../sale-item/dto/sale-item.dto";
 
 @ObjectType()
 export class SaleType extends PartialType(ErrorHandlingType) {
@@ -22,6 +23,8 @@ export class SaleType extends PartialType(ErrorHandlingType) {
     description: string;
     @Field({nullable: true})
     status: boolean;
+    @Field(() => [SaleItemType])
+    sale_item: string[]
 }
 
 @ObjectType()

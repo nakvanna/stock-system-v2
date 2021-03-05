@@ -2,9 +2,10 @@ import {computed, ref, watch} from "@vue/composition-api";
 import {useMutation} from "@vue/apollo-composable";
 import {PurchaseModel} from "pages/purchase/model/purchase.model";
 import {remove_purchase_graphql} from "pages/purchase/graphql/remove-purchase.graphql";
-import {create_purchase_graphql } from "../graphql/create-sale.graphql";
-import {purchase_graphql} from "pages/purchase/graphql/purchase.graphql";
 import {update_purchase_graphql } from "../graphql/update-sale.graphql";
+import {create_sale_graphql} from "pages/sale/graphql/create-sale.graphql";
+import { sale_graphql } from "../graphql/sale.graphql";
+import {SaleModel} from "pages/sale/model/sale.model";
 
 
 //--OnDone message--//
@@ -26,19 +27,19 @@ function onSuccess(_data: any, context: any) {
   }
 }
 
-export const selected_purchase = ref({}) as any;
+export const selected_sale = ref({}) as any;
 /***CRUD Action***/
 
 /*CREATE*/
-export function createPurchase(prop: any, context: any) {
+export function createSale(prop: any, context: any) {
   //--variables--//
-  const create_data = ref<PurchaseModel>({
+  const create_data = ref<SaleModel>({
     description: '',
     amount: 0,
     paid_amount: 0,
     due_amount: 0,
-    create_inventory_input: [],
-    purchase_status: 'Pending'
+    create_sale_item_input: [],
+    sale_status: 'Pending'
   });
   //--end-variables--//
 
@@ -46,18 +47,17 @@ export function createPurchase(prop: any, context: any) {
   const mapped = computed(function () {
     return {
       ...create_data.value,
-      supplier_id: create_data.value.supplier_id?._id,
+      customer_id: create_data.value.customer_id?._id,
       amount: create_data.value.amount,
-      create_inventory_input: create_data.value.create_inventory_input.map((m: any) => {
+      create_sale_item_input: create_data.value.create_sale_item_input.map((m: any) => {
         return {
-          purchase_id: '',
+          sale_id: '',
           product_option_id: m._id,
-          purchase_status: create_data.value.purchase_status,
-          stock_qty: m.purchase_qty,
-          purchase_qty: m.purchase_qty,
+          sale_status: create_data.value.sale_status,
+          sale_qty: m.sale_qty,
           discount: m.discount,
           tax: m.tax,
-          buy_price: m.buy_price,
+          sale_price: m.sale_price,
         }
       })
     }
@@ -65,26 +65,27 @@ export function createPurchase(prop: any, context: any) {
   //--end-computed--//
 
   //--function--//
-  const createPurchaseData = async () => {
+  const createSaleData = async () => {
     await create().then((data: any) => {
-      onSuccess(data?.data.createPurchase, context);
+      onSuccess(data?.data.createSale, context);
     })
   }
   //--end-function--//
 
   //--create vue apollo--//
-  const {mutate: create, onDone} = useMutation(create_purchase_graphql, () => ({
+  const {mutate: create, onDone} = useMutation(create_sale_graphql, () => ({
     variables: {create_input: mapped.value},
   }));
 
   onDone((data: any) => {
-    if (data.data.createPurchase.success) {
+    if (data.data.createSale.success) {
       create_data.value = {
         description: '',
         amount: 0,
         paid_amount: 0,
         due_amount: 0,
-        create_inventory_input: []
+        create_sale_item_input: [],
+        sale_status: 'Pending'
       };
       context.emit('on-success')
     }
@@ -94,7 +95,7 @@ export function createPurchase(prop: any, context: any) {
   //--return--//
   return {
     create_data,
-    createPurchaseData,
+    createSaleData,
     mapped
   }
 }
@@ -109,13 +110,10 @@ export const readPurchase = (table: any) => {
       total_item: 0
     },
     query: {
-      purchases: purchase_graphql,
+      sales: sale_graphql,
     },
     filter: {
-      study_year: {
-        $eq: null
-      },
-      grade: {
+      customer_id: {
         $eq: null
       },
     }
@@ -131,21 +129,21 @@ export const readPurchase = (table: any) => {
   //set selected value
   watch(grid_data.value, (value: any) => {
     if (value.selected.length) {
-      selected_purchase.value = JSON.parse(JSON.stringify(value.selected[0]))
+      selected_sale.value = JSON.parse(JSON.stringify(value.selected[0]))
     }
   })
   //functions
   const showAll = () => table?.value?.filterTable(filter.value, 0, false);
-  const mapPurchase = (x: any) => {
+  const mapSale = (x: any) => {
     const amount = x.node.due_amount;
-    const payback = x.node.purchase_payback.map((m: any) => m.payback).reduce((a: number, b: number) => a + b, 0)
+    // const payback = x.node.purchase_payback.map((m: any) => m.payback).reduce((a: number, b: number) => a + b, 0)
     return {
       ...x.node,
       amount_index: `$${x.node.amount.toFixed(2)}`,
       paid_amount_index: `$${x.node.paid_amount.toFixed(2)}`,
-      due_amount_index: "$" + amount + " - " + "$" + payback + " = " + "$"+(amount - payback),
-      supplier_name: x.node.supplier.name,
-      purchase_date: x.node.purchase_date,
+      due_amount_index: "$" + amount,
+      customer_name: x.node.customer.business_name,
+      sale_date: x.node.sale_date,
       createdAt: x.node.createdAt,
       // purchase_date: new Date(new Date(x.node.purchase_date).toDateString()),
       // createdAt: new Date(new Date(x.node.createdAt).toDateString()),
@@ -159,7 +157,7 @@ export const readPurchase = (table: any) => {
     grid_data,
     //computed
     //functions
-    mapPurchase,
+    mapSale,
     showAll,
   }
 };

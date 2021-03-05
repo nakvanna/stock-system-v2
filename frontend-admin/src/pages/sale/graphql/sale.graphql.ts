@@ -1,74 +1,71 @@
 import {gql} from '@apollo/client/core';
 
-export const purchase_graphql = gql`
-    query purchases(
-      $first: Float!
-      $after: String!
-      $condition: JSON!
-    ){
-      purchases(options: {first: $first, after: $after, condition: $condition}){
-        totalCount
-        edges {
-          cursor
-          node {
+export const sale_graphql = gql`
+  query sales(
+    $first: Float!
+    $after: String!
+    $condition: JSON!
+  ){
+    sales(options: {first: $first, after: $after, condition: $condition}){
+      totalCount
+      edges {
+        cursor
+        node {
+          _id
+          sale_status
+          sale_date
+          description
+          amount
+          paid_amount
+          due_amount
+          createdAt
+          customer{
             _id
-            purchase_status
-            purchase_date
-            description
-            amount
-            paid_amount
-            due_amount
-            createdAt
-            supplier{
+            business_name
+            contact_firstname
+            contact_lastname
+            date_of_birth
+            email
+            phone
+            address1
+            address2
+          }
+          sale_item{
+            _id
+            sale_status
+            sale_qty
+            sale_price
+            tax
+            discount
+            product_option{
               _id
-              name
-              company
-              phone
-              email
-              address
-              note
-            }
-            inventory{
-              _id
-              purchase_status
-              stock_qty
-              purchase_qty
-              buy_price
-              tax
-              discount
-              product_option{
+              sku
+              weight
+              weight_unit
+              price
+              barcode
+              image_position
+              option1
+              option2
+              option3
+              product{
                 _id
-                sku
-                weight
-                weight_unit
-                price
-                barcode
-                image_position
-                option1
-                option2
-                option3
-                product{
+                title
+                description
+                product_media{
                   _id
-                  title
-                  description
-                  product_media{
-                    _id
-                    src
-                    position
-                  }
+                  src
+                  position
                 }
               }
             }
-            purchase_payback{
-              _id
-              payback
-            }
           }
         }
-        pageInfo {
-          hasNextPage
-          endCursor
-        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
+  }
 `

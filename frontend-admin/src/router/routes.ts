@@ -16,6 +16,7 @@ const routes: RouteConfig[] = [
       //Sale route
       {path: '/sales', meta: 'sales', component: () => import('pages/sale/Sale.index.vue')},
       {path: '/sale/new', meta: 'sales', component: () => import('pages/sale/Sale.create.vue')},
+      {path: '/sale/view/:id', meta: 'sales', component: () => import('pages/sale/Sale.view.vue')},
       {
         path: '/settings', component: () => import('pages/setting/Setting.index.vue'),
         children: [

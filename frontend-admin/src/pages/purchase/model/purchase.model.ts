@@ -4,7 +4,7 @@ export interface PurchaseModel {
   purchase_date?: Date;
   purchase_status?: string;
   amount?: number;
-  paid_amount?: number;
+  paid_amount?: number | any;
   due_amount?: number;
   description?: string;
   status?: boolean;

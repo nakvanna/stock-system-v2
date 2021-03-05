@@ -1,9 +1,9 @@
 <template>
-  <q-page class="q-pa-md" v-if="result">
-    <div class="row q-pa-sm q-gutter-sm">
-      <span class="text-h6 text-bold">វិក័យបត្រទិញ</span>
+  <q-page class="q-pa-xs" v-if="result">
+    <div class="row q-pa-xs q-gutter-sm">
+      <span class="text-h6 text-bold">វិក័យបត្រលក់</span>
       <q-space/>
-      <q-btn outline to="/purchases" icon="fas fa-arrow-alt-circle-left"/>
+      <q-btn outline to="/sales" icon="fas fa-arrow-alt-circle-left"/>
     </div>
     <q-separator/>
     <div class="row q-pt-sm q-gutter-sm">
@@ -11,13 +11,13 @@
         <q-card style="min-width: 100%">
           <q-card-section>
             <div class="row q-gutter-sm">
-              <strong>ថ្ងៃទិញ</strong>
-              <span>{{ new Date(result.purchase.purchase_date).toDateString()}}</span>
+              <strong>ថ្ងៃលក់</strong>
+              <span>{{ new Date(result.sale.sale_date).toDateString()}}</span>
             </div>
             <div class="row q-gutter-sm q-pt-sm">
               <div class="col q-gutter-sm">
-                <strong>ប្រភេទនៃការទិញ</strong>
-                <span v-if="result.purchase.purchase_status === 'Pending'" class="text-bold text-negative">
+                <strong>ប្រភេទនៃការលក់</strong>
+                <span v-if="result.sale.sale_status === 'Pending'" class="text-bold text-negative">
                   Pending
                 </span>
                 <span v-else class="text-primary text-bold">
@@ -26,17 +26,17 @@
               </div>
               <div class="col q-gutter-sm">
                 <strong>តម្លៃសរុប</strong>
-                <span class="text-warning text-bold">${{result.purchase.amount.toFixed(2)}}</span>
+                <span class="text-warning text-bold">${{result.sale.amount.toFixed(2)}}</span>
               </div>
             </div>
             <div class="row q-gutter-sm q-pt-sm">
               <div class="col q-gutter-sm">
-                <strong>តម្លៃចំណាយ</strong>
-                <span class="text-primary text-bold">${{result.purchase.paid_amount.toFixed(2)}}</span>
+                <strong>តម្លៃចំណាយ</strong><br>
+                <span class="text-primary text-bold">${{result.sale.paid_amount.toFixed(2)}}</span>
               </div>
               <div class="col q-gutter-sm">
-                <strong>តម្លៃជំពាក់</strong>
-                <span class="text-negative text-bold">${{result.purchase.due_amount.toFixed(2)}}</span>
+                <strong>តម្លៃជំពាក់</strong><br>
+                <span class="text-negative text-bold">${{result.sale.due_amount.toFixed(2)}}</span>
               </div>
             </div>
           </q-card-section>
@@ -47,25 +47,25 @@
           <q-card-section>
             <div class="row q-gutter-sm">
               <strong>ក្រុមហ៊ុន</strong>
-              <span>{{ result.purchase.supplier.company }}</span>
+              <span>{{ result.sale.customer.business_name }}</span>
             </div>
             <div class="row q-gutter-sm q-pt-sm">
               <div class="col q-gutter-sm">
                 <strong>ឈ្មោះទំនាក់ទំនង</strong>
-                <span>{{result.purchase.supplier.name}}</span>
+                <span>{{result.sale.customer.contact_firstname + ' ' +result.sale.customer.contact_lastname}}</span>
               </div>
               <div class="col q-gutter-sm">
-                <span>{{result.purchase.supplier.address}}</span>
+                <span>{{result.sale.customer.phone + ', ' +result.sale.customer.email}}</span>
               </div>
             </div>
             <div class="row q-gutter-sm q-pt-sm">
               <div class="col q-gutter-sm">
-                <strong>លេខទូរសព្ទ</strong>
-                <span>{{result.purchase.supplier.phone}}</span>
+                <strong>អាសយដ្ឋានទី១</strong><br>
+                <span>{{result.sale.customer.address1}}</span>
               </div>
               <div class="col q-gutter-sm">
-                <strong>E-mail</strong>
-                <span>{{result.purchase.supplier.email}}</span>
+                <strong>អាសយដ្ឋានទី២</strong><br>
+                <span>{{result.sale.customer.address2}}</span>
               </div>
             </div>
           </q-card-section>
@@ -75,7 +75,7 @@
     <div class="row q-pt-sm">
       <div class="full-width">
         <q-table
-          :data="result.purchase.inventory"
+          :data="result.sale.sale_item"
           :columns="columns.column2"
           row-key="name"
           :rows-per-page-options="[0]"
@@ -85,17 +85,14 @@
               <q-td key="product_name">
                 {{ props.row.product_option.product.title + " (" +props.row.product_option.sku + ")" }}
               </q-td>
-              <q-td key="sell_price">
+              <q-td key="sale_price">
                 ${{props.row.product_option.price.toFixed(2)}}
               </q-td>
-              <q-td key="purchase_qty">
-                {{props.row.purchase_qty}}
-              </q-td>
-              <q-td key="buy_price">
-                ${{props.row.buy_price.toFixed(2)}}
+              <q-td key="sale_qty">
+                {{props.row.sale_qty}}
               </q-td>
               <q-td key="total">
-                ${{ ((props.row.buy_price ) * ( props.row.purchase_qty)).toFixed(2)}}
+                ${{ ((props.row.sale_price ) * ( props.row.sale_qty)).toFixed(2)}}
               </q-td>
             </q-tr>
           </template>
@@ -110,12 +107,12 @@
 import {reactive} from "@vue/composition-api";
 import {useQuery} from "@vue/apollo-composable";
 import {purchase_one_graphql} from "pages/purchase/view/graphql/purchase-one.graphql";
+import { sale_one_graphql } from "./view/graphql/sale-one.graphql";
 
 export default {
-  name: "Purchase.view",
+  name: "Sale.view",
   setup(props: any, context: any){
     const columns = reactive({
-      column1: [],
       column2: [
         {
           name: 'product_name',
@@ -123,18 +120,13 @@ export default {
           align: 'left',
           sortable: true
         },{
-          name: 'sell_price',
+          name: 'sale_price',
           label: 'តម្លៃលក់',
           align: 'left',
           sortable: true
         },{
-          name: 'purchase_qty',
-          label: 'ចំនួនទិញ',
-          align: 'left',
-          sortable: true
-        },{
-          name: 'buy_price',
-          label: 'តម្លៃទិញ',
+          name: 'sale_qty',
+          label: 'ចំនួនលក់',
           align: 'left',
           sortable: true
         },{
@@ -144,14 +136,13 @@ export default {
           sortable: true
         },
       ],
-      column3: [],
     })
     const variables = reactive({
       id: context.root.$route.params.id
     });
 
     const {result} = useQuery(
-      purchase_one_graphql,
+      sale_one_graphql,
       () => variables,
     );
 

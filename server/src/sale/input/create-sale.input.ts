@@ -1,4 +1,5 @@
 import {Field, InputType} from '@nestjs/graphql';
+import { CreateSaleItemInput } from 'src/sale-item/input/create-sale-item.input';
 
 @InputType()
 export class CreateSaleInput {
@@ -16,4 +17,6 @@ export class CreateSaleInput {
     due_amount: number;
     @Field({nullable: true})
     description: string;
+    @Field(() => [CreateSaleItemInput])
+    create_sale_item_input: string[]
 }

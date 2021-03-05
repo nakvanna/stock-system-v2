@@ -82,7 +82,8 @@
             <q-card-section>
               <div class="text-center">
                 <div v-show="false">
-                  {{ create_data.amount = amount}}
+                  {{ create_data.amount = amount }}
+                  {{ create_data.due_amount = due_amount }}
                 </div>
                 <span class="text-h5">
                   <strong>សរុប</strong> ${{ amount.toFixed(2) }}
@@ -189,8 +190,7 @@
       <q-separator/>
       <div class="q-pb-lg q-px-lg row q-mt-md">
         <q-space/>
-        <q-btn rounded flat class="bg-blue-1" color="primary" type="submit"
-               label="រក្សាទុក"/>
+        <q-btn rounded flat class="bg-blue-1" color="primary" type="submit" label="រក្សាទុក"/>
       </div>
     </q-form>
   </q-page>
@@ -204,7 +204,7 @@ import {supplier_graphql} from "pages/purchase/view/graphql/supplier.graphql";
 import DatePicker from "components/DatePicker.vue";
 import {product_option_from_product} from "pages/setting/product/graphql/product.graphql";
 
-export default defineComponent({
+export default {
   name: "PurchaseCreate",
   components: {DatePicker, SearchSelect},
 
@@ -254,12 +254,18 @@ export default defineComponent({
       if (create_data.value.create_inventory_input){
         return create_data.value.create_inventory_input.map((m: any) => {
           return (m.purchase_qty * m.buy_price) - ((m.purchase_qty * m.buy_price * m.discount) / 100) + ((m.purchase_qty * m.buy_price * m.tax) / 100)
-        }).reduce((a: number, b: number) => a + b, 0)
+        }).reduce((a: number, b: number) => a + b, 0);
       }
     });
 
-    watch(create_data.value, (val: any) => {
-      val.due_amount = val.amount - val.paid_amount;
+    // watch(create_data.value, (val: any) => {
+    //   val.due_amount = val.amount - val.paid_amount;
+    // });
+
+    const due_amount = computed(() => {
+      if (create_data.value.create_inventory_input){
+        return parseFloat(amount.value) - parseFloat(create_data.value.paid_amount)
+      }
     });
 
     const removeProductOption = ((index: any) => {
@@ -291,12 +297,11 @@ export default defineComponent({
       columns,
       amount,
       mapped,
-      removeProductOption
+      removeProductOption,
+      due_amount
     }
   }
-})
+}
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

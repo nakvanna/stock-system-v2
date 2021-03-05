@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-xs">
-    <q-form @submit="">
+    <q-form @submit="createSaleData">
       <div class="row q-pa-xs q-gutter-lg">
         <span class="text-h6 text-bold">លក់ទំនិញ</span>
         <q-space/>
@@ -19,11 +19,11 @@
                   label="ជ្រើសរើសអ្នកផ្គត់ផ្គង់"
                   v-model="create_data.customer_id"
                   hint="ជ្រើសរើសអ្នកផ្គត់ផ្គង់"
-                  option_label="name"
-                  :query="query.supplier"
-                  query_name="suppliers"
+                  option_label="business_name"
+                  :query="query.customer"
+                  query_name="customers"
                   :hide_selected="true"
-                  search_field="name"
+                  search_field="business_name"
                 >
                   <template v-slot:option="scope">
                     <q-item
@@ -32,7 +32,12 @@
                     >
                       <q-item-section>
                         <q-item-label class="text-primary">
-                          {{ scope.opt.name }} - ({{ scope.opt.company }})
+                          <span class="text-h6">
+                            {{ scope.opt.business_name }}
+                          </span>
+                        </q-item-label>
+                        <q-item-label class="text-primary">
+                          {{ scope.opt.contact_lastname }} - {{ scope.opt.contact_firstname }}
                         </q-item-label>
                         <q-item-label caption class="q-gutter-sm">
                           <q-badge color="blue-1" text-color="blue" :label="scope.opt.phone"/>
@@ -47,7 +52,7 @@
                 <q-select
                   outlined dense
                   class="col-4"
-                  v-model="create_data.purchase_status"
+                  v-model="create_data.sale_status"
                   :options="['Pending', 'Receive']"
                   hint="ជ្រើសរើសប្រភេទ"
                   label="Status"
@@ -82,7 +87,8 @@
             <q-card-section>
               <div class="text-center">
                 <div v-show="false">
-                  {{ create_data.amount = amount}}
+                  {{ create_data.amount = amount }}
+                  {{ create_data.due_amount = due_amount }}
                 </div>
                 <span class="text-h5">
                   <strong>សរុប</strong> ${{ amount.toFixed(2) }}
@@ -141,7 +147,7 @@
               </search-select>
               <div>
                 <q-table
-                  :data="create_data.create_inventory_input"
+                  :data="create_data.create_sale_item_input"
                   :columns="columns"
                   row-key="sku"
                   :rows-per-page-options="[0]"
@@ -155,10 +161,10 @@
                         {{ props.row.title }} - ({{props.row.sku}})
                       </q-td>
                       <q-td key="purchase_qty" :props="props">
-                        <q-input v-model.number="props.row.purchase_qty" type="number" />
+                        <q-input v-model.number="props.row.sale_qty" type="number" />
                       </q-td>
                       <q-td key="buy_price" :props="props">
-                        <q-input v-model.number="props.row.buy_price" type="number" prefix="$"/>
+                        <q-input v-model.number="props.row.sale_price" type="number" prefix="$"/>
                       </q-td>
                       <q-td key="discount" :props="props">
                         <q-input v-model.number="props.row.discount" type="number" prefix="%" />
@@ -168,14 +174,14 @@
                       </q-td>
                       <q-td key="net_cost" :props="props">
                         ${{
-                          ((props.row.purchase_qty * props.row.buy_price)
+                          ((props.row.sale_qty * props.row.sale_price)
                             -
-                            ((props.row.purchase_qty * props.row.buy_price * props.row.discount) / 100)
+                            ((props.row.sale_qty * props.row.sale_price * props.row.discount) / 100)
                             +
-                            ((props.row.purchase_qty * props.row.buy_price * props.row.tax) / 100)).toFixed(2)
+                            ((props.row.sale_qty * props.row.sale_price * props.row.tax) / 100)).toFixed(2)
                         }}
                       </q-td>
-                      <q-td key="sell_price" :props="props">
+                      <q-td key="sale_price" :props="props">
                         <q-input v-model.number="props.row.price" prefix="$"/>
                       </q-td>
                     </q-tr>
@@ -200,10 +206,10 @@
 <script lang="ts">
 import {computed, defineComponent, reactive, ref, watch} from "@vue/composition-api";
 import SearchSelect from "components/SearchSelect.vue";
-import { createPurchase } from "./store/sale.store";
-import {supplier_graphql} from "pages/purchase/view/graphql/supplier.graphql";
 import DatePicker from "components/DatePicker.vue";
 import {product_option_from_product} from "pages/setting/product/graphql/product.graphql";
+import {createSale} from "pages/sale/store/sale.store";
+import {customer_graphql} from "pages/sale/view/graphql/customer.graphql";
 
 export default defineComponent({
   name: "PurchaseCreate",
@@ -225,7 +231,7 @@ export default defineComponent({
       },{
         align: 'left',
         name: 'buy_price',
-        label: 'តម្លៃទិញ',
+        label: 'តម្លៃលក់',
       },{
         align: 'left',
         name: 'discount',
@@ -238,45 +244,47 @@ export default defineComponent({
         align: 'left',
         name: 'net_cost',
         label: 'តម្លៃដើមសរុប',
-      },{
-        align: 'left',
-        name: 'sell_price',
-        label: 'តម្លៃលក់',
       },
     ]);
     const query = reactive({
-      supplier: supplier_graphql,
+      customer: customer_graphql,
       product_option: product_option_from_product
     });
 
-    const {create_data, createPurchaseData, mapped} = createPurchase(props, context);
+    const {create_data, createSaleData, mapped} = createSale(props, context);
 
     const amount = computed(()=> {
-      if (create_data.value.create_inventory_input){
-        return create_data.value.create_inventory_input.map((m: any) => {
-          return (m.purchase_qty * m.buy_price) - ((m.purchase_qty * m.buy_price * m.discount) / 100) + ((m.purchase_qty * m.buy_price * m.tax) / 100)
+      if (create_data.value.create_sale_item_input){
+        return create_data.value.create_sale_item_input.map((m: any) => {
+          return (m.sale_qty * m.sale_price) - ((m.sale_qty * m.sale_price * m.discount) / 100) + ((m.sale_qty * m.sale_price * m.tax) / 100)
         }).reduce((a: number, b: number) => a + b, 0)
       }
     });
 
-    watch(create_data.value, (val: any) => {
-      val.due_amount = val.amount - val.paid_amount;
-    });
+    // watch(create_data.value, (val: any) => {
+    //   val.due_amount = val.amount - val.paid_amount;
+    // });
+
+    const due_amount = computed(() => {
+      if (create_data.value.create_sale_item_input){
+        return parseFloat(amount.value) - parseFloat(create_data.value.paid_amount)
+      }
+    })
 
     const removeProductOption = ((index: any) => {
-      create_data.value.create_inventory_input.splice(index, 1)
+      create_data.value.create_sale_item_input.splice(index, 1)
     });
 
     const inputSelect = ((data: any) => {
       for (let i = 0; i < data.product_option.length; i ++){
-        const exist = create_data.value.create_inventory_input.some((s: any) => s.sku === data.product_option[i].sku);
+        const exist = create_data.value.create_sale_item_input.some((s: any) => s.sku === data.product_option[i].sku);
         if ( !exist ){
           delete data.product_option[i].product_id;
-          create_data.value.create_inventory_input.push({
+          create_data.value.create_sale_item_input.push({
             ...data.product_option[i],
             title: data.title,
-            purchase_qty: 1,
-            buy_price: 0,
+            sale_qty: 1,
+            sale_price: 0,
             discount: 0,
             tax: 0,
           })
@@ -285,12 +293,13 @@ export default defineComponent({
     });
 
     return {
-      createPurchaseData,
+      createSaleData,
       create_data,
       query,
       inputSelect,
       columns,
       amount,
+      due_amount,
       mapped,
       removeProductOption
     }

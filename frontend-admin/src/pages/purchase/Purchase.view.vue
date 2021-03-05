@@ -1,6 +1,6 @@
 <template>
-  <q-page class="q-pa-md" v-if="result">
-    <div class="row q-pa-sm q-gutter-sm">
+  <q-page class="q-pa-xs" v-if="result">
+    <div class="row q-pa-xs q-gutter-sm">
       <span class="text-h6 text-bold">វិក័យបត្រទិញ</span>
       <q-space/>
       <q-btn outline to="/purchases" icon="fas fa-arrow-alt-circle-left"/>

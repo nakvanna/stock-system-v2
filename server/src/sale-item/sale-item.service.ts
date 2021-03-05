@@ -17,12 +17,14 @@ export class SaleItemService {
         create_input: CreateSaleItemInput,
     ): Promise<SaleItemModel | ErrorHandlingMessage> {
         try {
+            console.log(create_input)
             const model = new this.model(create_input);
             const data = await model.save();
             data.message = 'បានរក្សាទុក';
             data.success = true;
             return data;
         } catch (e) {
+            console.log(e)
             return {
                 message: e.message.split(':')[0],
                 success: false,
@@ -122,8 +124,8 @@ export class SaleItemService {
         }
     }
 
-    async findByPurchase(purchase_id: string): Promise<SaleItemModel[]> {
-        return this.model.find({purchase_id})
+    async findBySale(sale_id: string): Promise<SaleItemModel[]> {
+        return this.model.find({sale_id})
     }
 
     async findByProductOption(product_option_id: string): Promise<SaleItemModel[]>{

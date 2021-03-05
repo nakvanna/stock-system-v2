@@ -1,9 +1,9 @@
 import {gql} from '@apollo/client/core';
 
-export const create_purchase_graphql = gql`
-  mutation createPurchase($create_input: CreatePurchaseInput!
+export const create_sale_graphql = gql`
+  mutation createSale($create_input: CreateSaleInput!
   ) {
-    createPurchase(create_input: $create_input) {
+    createSale(create_input: $create_input) {
       success
       message
     }

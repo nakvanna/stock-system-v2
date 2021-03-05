@@ -2,7 +2,7 @@ import {Args, ID, Mutation, Query, ResolveField, Resolver, Parent} from '@nestjs
 import {InputCursorPaginationOption} from 'shared/cursor-pagination';
 import {SaleItemType, SaleItemCursorPagination} from './dto/sale-item.dto';
 import {SaleItemService} from "./sale-item.service";
-import {CreateSaleItemInput, CreateInventoriesInput} from "./input/create-sale-item.input";
+import {CreateSaleItemInput, CreateSaleItemsInput} from "./input/create-sale-item.input";
 import { UpdateSaleItemInput } from './input/update-sale-item.input';
 import {ProductOptionType} from "../product-option/dto/product-option.dto";
 import {SaleItemModel} from "./models/sale-item.model";
@@ -17,12 +17,12 @@ export class SaleItemResolver {
     }
 
     @Mutation(() => SaleItemType)
-    createInventory(@Args('create_input') create_input: CreateSaleItemInput) {
+    createSaleItem(@Args('create_input') create_input: CreateSaleItemInput) {
         return this.service.create(create_input);
     }
 
     @Mutation(() => SaleItemType)
-    async createInventories(@Args('create_input') create_input: CreateInventoriesInput) {
+    async createSaleItems(@Args('create_input') create_input: CreateSaleItemsInput) {
         let pre_res: any = {};
         for (const inputElement of create_input.multiple) {
             console.log(inputElement)
@@ -50,34 +50,34 @@ export class SaleItemResolver {
     }
 
     @Mutation(() => SaleItemType)
-    updateInventory(
+    updateSaleItem(
         @Args('id') id: string,
         @Args('update_input') update_input: UpdateSaleItemInput,
     ) {
         return this.service.update(id, update_input);
     }
 
-    @Mutation(() => SaleItemType)
-    updateInventoryPurchaseStatus(
-        @Args('purchase_id') purchase_id: string,
-        @Args('update_input') update_input: UpdateSaleItemInput,
-    ) {
-        return this.service.updatePurchaseStatus(purchase_id, update_input);
-    }
-
-    @Mutation(() => SaleItemType)
-    removeInventory(@Args('id') id: string) {
-        return this.service.remove(id);
-    }
-
-    @Mutation(() => SaleItemType)
-    removeInventories(@Args('purchase_id') purchase_id: string) {
-        console.log(purchase_id)
-        return this.service.removeAll(purchase_id);
-    }
+    // @Mutation(() => SaleItemType)
+    // updateInventoryPurchaseStatus(
+    //     @Args('purchase_id') purchase_id: string,
+    //     @Args('update_input') update_input: UpdateSaleItemInput,
+    // ) {
+    //     return this.service.updatePurchaseStatus(purchase_id, update_input);
+    // }
+    //
+    // @Mutation(() => SaleItemType)
+    // removeInventory(@Args('id') id: string) {
+    //     return this.service.remove(id);
+    // }
+    //
+    // @Mutation(() => SaleItemType)
+    // removeInventories(@Args('purchase_id') purchase_id: string) {
+    //     console.log(purchase_id)
+    //     return this.service.removeAll(purchase_id);
+    // }
 
     @ResolveField(() => ProductOptionType)
     product_option(@Parent() inventory: SaleItemModel){
-        return this.productOptionService.findByInventory(inventory.product_option_id)
+        return this.productOptionService.findBySaleItem(inventory.product_option_id)
     }
 }

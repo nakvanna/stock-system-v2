@@ -99,4 +99,8 @@ export class ProductOptionService {
   async findByInventory(_id: string): Promise<ProductOptionModel>{
     return this.model.findOne({_id})
   }
+
+  async findBySaleItem(_id: string): Promise<ProductOptionModel>{
+    return this.model.findOne({_id})
+  }
 }

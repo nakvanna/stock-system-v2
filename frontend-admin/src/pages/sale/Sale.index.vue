@@ -16,7 +16,7 @@
             flat round color="primary"
           >
             <q-list>
-              <q-item clickable v-close-popup dense :to="grid_data.selected.length === 1 ? '/purchase/view/'+grid_data.selected[0]._id: null" >
+              <q-item clickable v-close-popup dense :to="grid_data.selected.length === 1 ? '/sale/view/'+grid_data.selected[0]._id: null" >
                 <q-item-section side>
                   <q-icon name="preview" color="blue-5" />
                 </q-item-section>
@@ -24,7 +24,7 @@
                   <q-item-label>បង្ហាញ</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item clickable v-close-popup dense to="/purchase/edit/" >
+              <q-item clickable v-close-popup dense to="/sale/edit/" >
                 <q-item-section side>
                   <q-icon name="edit" color="blue-5" />
                 </q-item-section>
@@ -71,9 +71,9 @@
     <e-j-s-grid
       ref="table"
       v-model="grid_data.selected"
-      :query="grid_data.query.purchases"
-      query_name="purchases"
-      :pre_map="mapPurchase"
+      :query="grid_data.query.sales"
+      query_name="sales"
+      :pre_map="mapSale"
       :record_value.sync="grid_data.record_value"
       is_group
     >
@@ -84,9 +84,9 @@
           :visible="false"
           :isPrimaryKey='true'
         />
-        <e-column field='purchase_date' headerText='ថ្ងៃទិញ' format="dd/MMM/y" type="date" textAlign='Left'/>
-        <e-column field='supplier_name' headerText='អ្នកផ្គត់ផ្គង់' textAlign='Left' width="150"/>
-        <e-column field='purchase_status' headerText='ប្រភេទនៃការទិញ'  textAlign='Left' width="150"/>
+        <e-column field='sale_date' headerText='ថ្ងៃទិញ' format="dd/MMM/y" type="date" textAlign='Left'/>
+        <e-column field='customer_name' headerText='អ្នកផ្គត់ផ្គង់' textAlign='Left' width="150"/>
+        <e-column field='sale_status' headerText='ប្រភេទនៃការទិញ'  textAlign='Left' width="150"/>
         <e-column field='amount_index' headerText='សរុប' textAlign='Left' width="150"/>
         <e-column field='paid_amount_index' headerText='ចំណាយ' textAlign='Left' width="150"/>
         <e-column field='due_amount_index' headerText='ជំពាក់' textAlign='Left' width="150"/>
@@ -107,12 +107,12 @@ export default defineComponent({
     setup() {
       const table = ref();
       const dialog = ref();
-      const {grid_data, mapPurchase, showAll} = readPurchase(table)
+      const {grid_data, mapSale, showAll} = readPurchase(table)
 
       return {
         table,
         grid_data,
-        mapPurchase,
+        mapSale,
         showAll,
         dialog,
       }

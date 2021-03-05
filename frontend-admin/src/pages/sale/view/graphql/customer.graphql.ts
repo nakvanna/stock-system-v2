@@ -1,19 +1,20 @@
 import {gql} from '@apollo/client/core';
 
-export const supplier_graphql = gql`
-  query filterSuppliers(
+export const customer_graphql = gql`
+  query filterCustomers(
     $first: Float!
     $after: String!
     $condition: JSON!
   ){
-    suppliers(options: {first: $first, after: $after, condition: $condition}){
+    customers(options: {first: $first, after: $after, condition: $condition}){
       totalCount
       edges {
         cursor
         node {
           _id
-          name
-          company
+          business_name
+          contact_firstname
+          contact_lastname
           phone
           email
           createdAt

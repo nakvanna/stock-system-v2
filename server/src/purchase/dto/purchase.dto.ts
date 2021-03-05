@@ -34,5 +34,4 @@ export class PurchaseType extends PartialType(ErrorHandlingType) {
 }
 
 @ObjectType()
-export class PurchaseCursorPagination extends CursorPagination(PurchaseType) {
-}
+export class PurchaseCursorPagination extends CursorPagination(PurchaseType) {}

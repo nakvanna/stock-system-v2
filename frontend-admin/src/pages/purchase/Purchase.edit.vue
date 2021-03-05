@@ -1,7 +1,7 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="q-pa-xs">
     <q-form @submit="updatePurchaseInventory(selected_purchase._id)">
-      <div class="row q-pa-md q-gutter-lg">
+      <div class="row q-pa-xs q-gutter-lg">
         <span class="text-h6 text-bold">កែប្រែទំនិញថ្មី</span>
         <q-space/>
         <q-btn outline to="/purchases" icon="fas fa-arrow-alt-circle-left"/>

@@ -369,39 +369,6 @@ type CustomerCursorPagination {
   pageInfo: CustomerTypePageInfo
 }
 
-type SaleType {
-  createdAt: DateTime
-  updatedAt: DateTime
-  success: Boolean
-  message: String
-  _id: ID
-  customer_id: String
-  sale_date: DateTime
-  sale_status: String
-  amount: Float
-  paid_amount: Float
-  due_amount: Float
-  description: String
-  status: Boolean
-}
-
-type SaleTypeEdge {
-  cursor: String
-  node: SaleType
-}
-
-type SaleTypePageInfo {
-  hasNextPage: Boolean
-  endCursor: String
-}
-
-type SaleCursorPagination {
-  edges: [SaleTypeEdge!]
-  nodes: [SaleType!]
-  totalCount: Int
-  pageInfo: SaleTypePageInfo
-}
-
 type SaleItemType {
   createdAt: DateTime
   updatedAt: DateTime
@@ -434,6 +401,41 @@ type SaleItemCursorPagination {
   nodes: [SaleItemType!]
   totalCount: Int
   pageInfo: SaleItemTypePageInfo
+}
+
+type SaleType {
+  createdAt: DateTime
+  updatedAt: DateTime
+  success: Boolean
+  message: String
+  _id: ID
+  customer_id: String
+  sale_date: DateTime
+  sale_status: String
+  amount: Float
+  paid_amount: Float
+  due_amount: Float
+  description: String
+  status: Boolean
+  sale_item: [SaleItemType!]!
+  customer: CustomerType!
+}
+
+type SaleTypeEdge {
+  cursor: String
+  node: SaleType
+}
+
+type SaleTypePageInfo {
+  hasNextPage: Boolean
+  endCursor: String
+}
+
+type SaleCursorPagination {
+  edges: [SaleTypeEdge!]
+  nodes: [SaleType!]
+  totalCount: Int
+  pageInfo: SaleTypePageInfo
 }
 
 type Query {
@@ -496,12 +498,12 @@ type Mutation {
   createProductOption(create_input: CreateProductOptionInput!): ProductOptionType!
   updateProductOption(update_input: UpdateProductOptionInput!, id: String!): ProductOptionType!
   removeProductOption(id: String!): ProductOptionType!
-  createInventory(create_input: CreateSaleItemInput!): SaleItemType!
-  createInventories(create_input: CreateInventoriesInput!): SaleItemType!
-  updateInventory(update_input: UpdateSaleItemInput!, id: String!): SaleItemType!
-  updateInventoryPurchaseStatus(update_input: UpdateSaleItemInput!, purchase_id: String!): SaleItemType!
-  removeInventory(id: String!): SaleItemType!
-  removeInventories(purchase_id: String!): SaleItemType!
+  createInventory(create_input: CreateInventoryInput!): InventoryType!
+  createInventories(create_input: CreateInventoriesInput!): InventoryType!
+  updateInventory(update_input: UpdateInventoryInput!, id: String!): InventoryType!
+  updateInventoryPurchaseStatus(update_input: UpdateInventoryInput!, purchase_id: String!): InventoryType!
+  removeInventory(id: String!): InventoryType!
+  removeInventories(purchase_id: String!): InventoryType!
   createPurchase(create_input: CreatePurchaseInput!): PurchaseType!
   updatePurchase(update_input: UpdatePurchaseInput!, id: String!): PurchaseType!
   removePurchase(id: String!): PurchaseType!
@@ -517,6 +519,9 @@ type Mutation {
   createSale(create_input: CreateSaleInput!): SaleType!
   updateSale(update_input: UpdateSaleInput!, id: String!): SaleType!
   removeSale(id: String!): SaleType!
+  createSaleItem(create_input: CreateSaleItemInput!): SaleItemType!
+  createSaleItems(create_input: CreateSaleItemsInput!): SaleItemType!
+  updateSaleItem(update_input: UpdateSaleItemInput!, id: String!): SaleItemType!
 }
 
 input CreateBrandInput {
@@ -621,26 +626,28 @@ input UpdateProductOptionInput {
   status: Boolean
 }
 
-input CreateSaleItemInput {
-  sale_id: String
+input CreateInventoryInput {
+  purchase_id: String
   product_option_id: String
-  sale_status: String
-  sale_qty: Float
-  sale_price: Float
+  purchase_status: String
+  stock_qty: Float
+  purchase_qty: Float
   discount: Float
   tax: Float
+  buy_price: Float
 }
 
 input CreateInventoriesInput {
-  multiple: [CreateSaleItemInput!]!
+  multiple: [CreateInventoryInput!]!
 }
 
-input UpdateSaleItemInput {
-  sale_id: String
+input UpdateInventoryInput {
+  purchase_id: String
   product_option_id: String
-  sale_status: String
-  sale_qty: Float
-  sale_price: Float
+  purchase_status: String
+  stock_qty: Float
+  purchase_qty: Float
+  buy_price: Float
   discount: Float
   tax: Float
   status: Boolean
@@ -655,17 +662,6 @@ input CreatePurchaseInput {
   due_amount: Float
   description: String
   create_inventory_input: [CreateInventoryInput!]!
-}
-
-input CreateInventoryInput {
-  purchase_id: String
-  product_option_id: String
-  purchase_status: String
-  stock_qty: Float
-  purchase_qty: Float
-  discount: Float
-  tax: Float
-  buy_price: Float
 }
 
 input UpdatePurchaseInput {
@@ -745,6 +741,17 @@ input CreateSaleInput {
   paid_amount: Float
   due_amount: Float
   description: String
+  create_sale_item_input: [CreateSaleItemInput!]!
+}
+
+input CreateSaleItemInput {
+  sale_id: String
+  product_option_id: String
+  sale_status: String
+  sale_qty: Float
+  sale_price: Float
+  discount: Float
+  tax: Float
 }
 
 input UpdateSaleInput {
@@ -755,5 +762,20 @@ input UpdateSaleInput {
   paid_amount: Float
   due_amount: Float
   description: String
+  status: Boolean
+}
+
+input CreateSaleItemsInput {
+  multiple: [CreateSaleItemInput!]!
+}
+
+input UpdateSaleItemInput {
+  sale_id: String
+  product_option_id: String
+  sale_status: String
+  sale_qty: Float
+  sale_price: Float
+  discount: Float
+  tax: Float
   status: Boolean
 }
